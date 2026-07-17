@@ -545,7 +545,7 @@ const places = [
     "hasVegan": true,
     "hasSpicy": false,
     "note": "메로빙거플라츠 근처 배달 위주 한식당.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "도시락",
       "볶음 요리"
@@ -580,7 +580,7 @@ const places = [
     "hasVegan": true,
     "hasSpicy": false,
     "note": "말차·타로 소프트아이스크림과 도라야키 전문점. Oststr. 109.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "도라야키",
       "말차 소프트아이스크림"
@@ -597,7 +597,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": true,
     "note": "훈스뤼켄 거리의 아담한 한식 치킨 전문점.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "코리안 프라이드치킨"
     ],
@@ -613,7 +613,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": true,
     "note": "한국식 프라이드치킨과 소주 바. Charlottenstr. 49.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "양념/후라이드 치킨",
       "소주"
@@ -630,7 +630,7 @@ const places = [
     "hasVegan": true,
     "hasSpicy": false,
     "note": "플링거른 남부의 가정식 한식당. 비건 비빔밥 있음.",
-    "priceLevel": null,
+    "priceLevel": 2,
     "menu": [
       "간장 치킨",
       "채소 비빔밥"
@@ -701,7 +701,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": false,
     "note": "삿포로식 미소라멘 전문. Marienstr. 34.",
-    "priceLevel": null,
+    "priceLevel": 2,
     "menu": [
       "미소 라멘",
       "돼지고기 볶음밥"
@@ -718,7 +718,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": false,
     "note": "탄탄라멘과 치킨가스라멘이 유명. Immermannstr. 36.",
-    "priceLevel": null,
+    "priceLevel": 2,
     "menu": [
       "탄탄 라멘",
       "치킨가스 라멘"
@@ -735,7 +735,7 @@ const places = [
     "hasVegan": true,
     "hasSpicy": false,
     "note": "일본식 델리 겸 카페. 우동과 말차 라떼. Bilker Allee 1.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "가라아게",
       "우동",
@@ -770,7 +770,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": true,
     "note": "Takezo의 빌크 지점. Bilker Allee 56.",
-    "priceLevel": null,
+    "priceLevel": 2,
     "menu": [
       "유즈시오 라멘",
       "가키아게동"
@@ -823,7 +823,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": false,
     "note": "고급스러운 인테리어의 스시 레스토랑. Fürstenwall 66B.",
-    "priceLevel": null,
+    "priceLevel": 2,
     "menu": [
       "초밥 롤",
       "사시미"
@@ -840,7 +840,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": false,
     "note": "칼스플라츠 마켓의 굴·스시 스탠드.",
-    "priceLevel": null,
+    "priceLevel": 2,
     "menu": [
       "생굴",
       "초밥"
@@ -892,7 +892,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": false,
     "note": "QR코드 주문 방식의 스시·벤토 전문점.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "벤토 박스",
       "초밥 세트"
@@ -909,7 +909,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": false,
     "note": "포장·배달 전문 스시집, 필라델피아롤이 인기.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "필라델피아롤",
       "초밥 세트"
@@ -943,7 +943,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": false,
     "note": "규탄(우설) 세트로 유명한 정통 이자카야. Friedrichstr. 49.",
-    "priceLevel": null,
+    "priceLevel": 2,
     "menu": [
       "규탄(우설) 정식",
       "챠소바"
@@ -960,7 +960,7 @@ const places = [
     "hasVegan": true,
     "hasSpicy": false,
     "note": "바오지·유탸오·또우장 등 중국식 아침식사 전문. Friedrich-Ebert-Str. 53.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "바오즈",
       "유탸오",
@@ -1064,7 +1064,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": true,
     "note": "쓰촨식 고급 중식당. Klosterstr. 35.",
-    "priceLevel": null,
+    "priceLevel": 3,
     "menu": [
       "쿠민 양고기",
       "생선 요리"
@@ -1167,7 +1167,7 @@ const places = [
     "hasVegan": true,
     "hasSpicy": false,
     "note": "하노이식 정통 쌀국수. Graf-Adolf-Str. 58.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "쌀국수(포)",
       "오리 커리"
@@ -1253,7 +1253,7 @@ const places = [
     "hasVegan": true,
     "hasSpicy": false,
     "note": "베트남식 반미 샌드위치 전문. Herzogstr. 10b.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "반미 샌드위치(비건/치킨)"
     ],
@@ -1269,7 +1269,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": false,
     "note": "가정식 베트남 쌀국수집. Am Wehrhahn 40.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "쌀국수(포보)",
       "크리스피 덕"
@@ -1337,7 +1337,7 @@ const places = [
     "hasVegan": true,
     "hasSpicy": false,
     "note": "베트남 가족 운영 반미·쌀국수 맛집. Bilker Allee 64.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "반미",
       "쌀국수"
@@ -1371,7 +1371,7 @@ const places = [
     "hasVegan": true,
     "hasSpicy": true,
     "note": "태국 파인다이닝, 8코스 테이스팅 메뉴. Oststr. 158.",
-    "priceLevel": null,
+    "priceLevel": 3,
     "menu": [
       "8코스 테이스팅 메뉴",
       "똠얌꿍"
@@ -1388,7 +1388,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": false,
     "note": "쌀국수와 스시를 함께 파는 알트슈타트의 아시안 레스토랑.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "크런치롤",
       "쌀국수"
@@ -1508,7 +1508,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": false,
     "note": "정통 코리안 BBQ, 무제한 반찬바. Bismarckstr. 51.",
-    "priceLevel": null,
+    "priceLevel": 2,
     "menu": [
       "와규 세트",
       "무제한 반찬"
@@ -1525,7 +1525,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": true,
     "note": "연변식 회전 꼬치구이. 한중 국경 지역 스타일. Wetterstr. 2.",
-    "priceLevel": null,
+    "priceLevel": 2,
     "menu": [
       "양꼬치",
       "회전 꼬치구이"
@@ -1542,7 +1542,7 @@ const places = [
     "hasVegan": false,
     "hasSpicy": true,
     "note": "해물파전이 인기인 코리안 BBQ. Am Hain 44.",
-    "priceLevel": null,
+    "priceLevel": 2,
     "menu": [
       "해물파전",
       "코리안 BBQ"
@@ -1610,7 +1610,7 @@ const places = [
     "hasVegan": true,
     "hasSpicy": false,
     "note": "마카롱과 버블티 카페. Liesegangstr. 10.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "버블티",
       "마카롱"
@@ -1627,7 +1627,7 @@ const places = [
     "hasVegan": true,
     "hasSpicy": false,
     "note": "말차와 스무디가 인기인 커피·버블티 카페.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "말차 라떼",
       "스무디"
@@ -1644,7 +1644,7 @@ const places = [
     "hasVegan": true,
     "hasSpicy": false,
     "note": "타로 코코넛 밀크티로 유명. Friedrich-Ebert-Str. 45.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "타로 코코넛 밀크티",
       "흑당 버블티"
@@ -1661,7 +1661,7 @@ const places = [
     "hasVegan": true,
     "hasSpicy": false,
     "note": "베어하안 지하의 아기자기한 버블티 가게.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "버블티",
       "마카롱"
@@ -1678,7 +1678,7 @@ const places = [
     "hasVegan": true,
     "hasSpicy": false,
     "note": "비건 옵션 커스터마이징이 가능한 버블티 전문점.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "버블티(비건 가능)"
     ],
@@ -1712,7 +1712,7 @@ const places = [
     "hasVegan": true,
     "hasSpicy": false,
     "note": "하인리히하이네알레 지하역의 조용한 티하우스.",
-    "priceLevel": null,
+    "priceLevel": 1,
     "menu": [
       "패션프루트 그린티",
       "타로 밀크티"
@@ -2239,6 +2239,7 @@ let visitedPlaces = safeStorageGet("visitedPlaces", []); // 방문 체크한 장
 let currentCategory = "전체"; // 현재 선택된 카테고리 필터
 let currentPrice = "전체"; // 현재 선택된 가격대 필터
 let userLocation = null; // { lat, lng } 또는 null (GPS 권한 허용 시 채워짐)
+let isRealGpsLocation = false; // true=실제 GPS 위치, false=GPS 실패 시 중앙역으로 대체된 상태
 let markerMap = {}; // { placeId: LeafletMarker } - id로 마커를 빠르게 찾기 위한 캐시
 let userMarker = null; // 내 위치를 표시하는 파란 세모 마커
 let markerLayer = null; // 클러스터 그룹 또는 일반 레이어그룹 (장소 마커들을 담는 컨테이너)
@@ -2327,7 +2328,8 @@ function findNearestCafe(place) {
 function renderDistanceFromUser(place) {
   if (!userLocation) return "";
   const km = getDistanceKm(userLocation.lat, userLocation.lng, place.lat, place.lng);
-  return km < 1 ? `📍 내 위치에서 약 ${Math.round(km * 1000)}m` : `📍 내 위치에서 약 ${km.toFixed(1)}km`;
+  const label = isRealGpsLocation ? "내 위치" : "중앙역";
+  return km < 1 ? `📍 ${label}에서 약 ${Math.round(km * 1000)}m` : `📍 ${label}에서 약 ${km.toFixed(1)}km`;
 }
 
 function getFlagSvg(category) {
@@ -2421,7 +2423,7 @@ window.showRouteTo = function(placeId) {
     return;
   }
   if (!userLocation) {
-    alert("먼저 '📍 내 위치에서 거리 보기' 버튼을 눌러주세요!");
+    alert("먼저 '📍 내 위치' 버튼을 눌러주세요!");
     return;
   }
   const place = places.find((p) => p.id === placeId);
@@ -2545,7 +2547,7 @@ function renderCoursePanel() {
   });
 
   actionsEl.style.display = course.length > 0 ? "flex" : "none";
-  startInfoEl.textContent = userLocation
+  startInfoEl.textContent = isRealGpsLocation
     ? "📍 출발점: 내 위치"
     : "📍 출발점: 뒤셀도르프 중앙역";
   startInfoEl.style.display = course.length > 0 ? "block" : "none";
@@ -2815,6 +2817,14 @@ function applyFilters() {
   const listEl = document.getElementById("place-list");
   listEl.innerHTML = "";
 
+  if (filtered.length === 0) {
+    listEl.innerHTML = `
+      <li style="padding:2rem 1.2rem;text-align:center;color:#999;font-size:0.85rem;line-height:1.5;">
+        조건에 맞는 곳이 없어요.<br>검색어나 필터를 조정해보세요.
+      </li>
+    `;
+  }
+
   filtered.forEach((place) => {
     const dotColor = getColorForCategory(place.category);
     const markerIcon = L.divIcon({
@@ -2864,7 +2874,9 @@ function applyFilters() {
 
 function drawUserMarker(loc, popupText) {
   const btn = document.getElementById("locate-btn");
-  btn.textContent = "📍 내 위치 기준으로 거리 표시 중 (다시 찾기)";
+  btn.textContent = isRealGpsLocation
+    ? "📍 내 위치 기준으로 거리 표시 중 (다시 찾기)"
+    : "📍 중앙역 기준으로 거리 표시 중 (다시 찾기)";
   btn.classList.add("active");
 
   if (userMarker) map.removeLayer(userMarker);
@@ -2896,11 +2908,13 @@ function requestUserLocation() {
   navigator.geolocation.getCurrentPosition(
     (position) => {
       userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
+      isRealGpsLocation = true;
       drawUserMarker(userLocation, "📍 나의 실시간 현재 위치");
     },
     (error) => {
       console.warn("GPS 호출 실패, 중앙역으로 대체 작동합니다.", error.message);
       userLocation = { lat: 51.219853, lng: 6.794314 };
+      isRealGpsLocation = false;
       drawUserMarker(userLocation, "🗺️ 임시 위치 (Düsseldorf Hbf)로 작동 중");
     }
   );
@@ -2995,6 +3009,9 @@ async function startApp() {
   updateLevelBadge();
   renderCoursePanel();
   applyFilters();
+
+  const loadingEl = document.getElementById("map-loading");
+  if (loadingEl) loadingEl.remove(); // 지도 준비 끝났으니 로딩 문구 제거
 }
 
 startApp();
