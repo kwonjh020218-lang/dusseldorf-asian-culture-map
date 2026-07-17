@@ -2990,6 +2990,18 @@ async function startApp() {
   document.getElementById("course-clear-btn").addEventListener("click", clearCourse);
   document.getElementById("course-recommend-btn").addEventListener("click", generateRecommendedCourse);
 
+  // 모바일 바텀시트 핸들 - 누르면 검색창/리스트를 접고 지도를 크게 봄
+  const sidebarHandle = document.getElementById("sidebar-handle");
+  const appContainer = document.getElementById("app-container");
+  sidebarHandle.addEventListener("click", () => {
+    const collapsed = appContainer.classList.toggle("sidebar-collapsed");
+    sidebarHandle.setAttribute("aria-expanded", String(!collapsed));
+    // 지도 컨테이너 크기가 CSS로 바뀌었으니, Leaflet한테 다시 계산하라고 알려줘야
+    // 타일이 회색으로 깨지지 않음. 애니메이션(트랜지션) 끝난 뒤 한 번 더 불러줌.
+    setTimeout(() => map.invalidateSize(), 50);
+    setTimeout(() => map.invalidateSize(), 350);
+  });
+
   // "⚙️ 필터 더보기" 토글 - 가격/비건/매운맛/포토스팟/즐겨찾기 필터를 평소엔 접어둠
   const filterToggleBtn = document.getElementById("filter-toggle-btn");
   const filterMore = document.getElementById("filter-more");

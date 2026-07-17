@@ -289,6 +289,7 @@ body {
   flex: 1;
   height: 100%;
   position: relative;
+  transition: height 0.3s ease;
 }
 
 #map-loading {
@@ -556,8 +557,49 @@ body {
   display: none !important;
 }
 
+/* ===== 바텀시트 핸들 (데스크톱에선 안 보임) ===== */
+#sidebar-handle {
+  display: none;
+}
+
 /* ===== 모바일 반응형 ===== */
 @media (max-width: 768px) {
+  #sidebar-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    border: none;
+    background: #faf7f2;
+    padding: 0.5rem 0;
+    cursor: pointer;
+    border-bottom: 1px solid #e0dccf;
+    flex-shrink: 0;
+  }
+  #sidebar-handle .handle-bar {
+    width: 40px;
+    height: 4px;
+    border-radius: 999px;
+    background: #d8d0bd;
+  }
+  #sidebar-handle:hover .handle-bar {
+    background: #c65a3c;
+  }
+
+  /* 접힌 상태: 손잡이만 남기고 검색창/필터/리스트는 숨김, 지도가 그만큼 커짐 */
+  #app-container.sidebar-collapsed #sidebar {
+    height: auto;
+    overflow: hidden;
+  }
+  #app-container.sidebar-collapsed #filter-panel,
+  #app-container.sidebar-collapsed #course-panel,
+  #app-container.sidebar-collapsed #place-list {
+    display: none;
+  }
+  #app-container.sidebar-collapsed #map {
+    height: calc(100vh - 200px); /* 헤더+상단스트립+핸들 높이만큼 뺀 나머지 전부 */
+  }
+
   #app-header {
     padding: 0.7rem 1rem;
   }
