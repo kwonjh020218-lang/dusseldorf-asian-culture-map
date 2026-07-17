@@ -20,6 +20,8 @@
     <button id="roulette-btn" type="button">🎲 오늘 뭐 하지?</button>
   </div>
 
+  <button id="taste-recommend-btn" type="button">🎯 내 취향 맞춤 추천 보기</button>
+
   <!-- 룰렛 결과 모달 -->
   <div id="roulette-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="roulette-result-name">
     <div class="modal-box">
@@ -27,6 +29,16 @@
       <div class="modal-subtitle">오늘의 추천</div>
       <div class="modal-place-name" id="roulette-result-name"></div>
       <button class="modal-close-btn" onclick="closeRouletteModal()">확인</button>
+    </div>
+  </div>
+
+  <!-- 취향 맞춤 추천 모달 -->
+  <div id="taste-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="taste-result-name">
+    <div class="modal-box">
+      <div class="modal-emoji" aria-hidden="true">🎯</div>
+      <div class="modal-subtitle" id="taste-reason">취향을 분석해보니</div>
+      <div class="modal-place-name" id="taste-result-name"></div>
+      <button class="modal-close-btn" onclick="closeTasteModal()">확인</button>
     </div>
   </div>
 

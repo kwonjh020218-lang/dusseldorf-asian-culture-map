@@ -2666,6 +2666,75 @@ window.closeRouletteModal = function () {
   document.getElementById("roulette-modal").style.display = "none";
 };
 
+// ===== 취향 맞춤 추천 =====
+// 즐겨찾기·방문체크한 곳들의 공통점(매운맛/비건 비율, 자주 가는 카테고리)을 계산해서
+// 아직 안 가본 곳 중 취향에 가장 잘 맞는 곳을 골라주는 규칙 기반 추천 로직.
+// (머신러닝 모델이 아니라 "패턴 세기 + 조건 매칭"이지만, 추천 시스템의 기본 원리는 동일함)
+function generateTasteRecommendation() {
+  const likedIds = Array.from(new Set([...favorites, ...visitedPlaces]));
+  const liked = places.filter((p) => likedIds.includes(p.id));
+
+  if (liked.length < 3) {
+    alert(`아직 취향을 분석하기엔 데이터가 부족해요 (${liked.length}/3곳).\n마음에 드는 곳을 즐겨찾기하거나 가본 곳으로 체크해보세요!`);
+    return;
+  }
+
+  // 1. 매운맛/비건 선호도 계산 (찜한 곳의 절반 이상이면 "선호"로 판단)
+  const spicyRatio = liked.filter((p) => p.hasSpicy).length / liked.length;
+  const veganRatio = liked.filter((p) => p.hasVegan).length / liked.length;
+  const prefersSpicy = spicyRatio >= 0.5;
+  const prefersVegan = veganRatio >= 0.5;
+
+  // 2. 가장 자주 찜한 카테고리 상위 2개
+  const categoryCounts = {};
+  liked.forEach((p) => {
+    categoryCounts[p.category] = (categoryCounts[p.category] || 0) + 1;
+  });
+  const topCategories = Object.entries(categoryCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 2)
+    .map(([cat]) => cat);
+
+  // 3. 아직 안 찜한 곳들 중, 위 조건에 맞을 때마다 점수를 매겨서 후보 선정
+  const scored = places
+    .filter((p) => !likedIds.includes(p.id))
+    .map((p) => {
+      let score = 0;
+      if (prefersSpicy && p.hasSpicy) score++;
+      if (prefersVegan && p.hasVegan) score++;
+      if (topCategories.includes(p.category)) score++;
+      return { place: p, score };
+    })
+    .filter((c) => c.score > 0);
+
+  if (scored.length === 0) {
+    alert("취향에 맞는 새로운 곳을 아직 못 찾았어요. 조금 더 다양한 곳을 둘러봐 주세요!");
+    return;
+  }
+
+  const topScore = Math.max(...scored.map((c) => c.score));
+  const bestMatches = scored.filter((c) => c.score === topScore);
+  const pick = bestMatches[Math.floor(Math.random() * bestMatches.length)].place;
+
+  // 4. "왜 추천했는지" 이유 문장 만들기
+  const reasons = [];
+  if (prefersSpicy && pick.hasSpicy) reasons.push("매운 음식");
+  if (prefersVegan && pick.hasVegan) reasons.push("비건 메뉴");
+  if (topCategories.includes(pick.category)) reasons.push(pick.category);
+  const reasonText = reasons.length > 0 ? `평소 ${reasons.join("·")}을(를) 좋아하시길래` : "취향을 분석해보니";
+
+  document.getElementById("taste-reason").textContent = reasonText;
+  document.getElementById("taste-result-name").innerHTML = `${getCategoryLabel(pick.category)}<br>${escapeHtml(pick.name)}`;
+  document.getElementById("taste-modal").style.display = "flex";
+
+  const marker = markerMap[pick.id];
+  if (marker) focusOnMarker(pick, marker, 16);
+}
+
+window.closeTasteModal = function () {
+  document.getElementById("taste-modal").style.display = "none";
+};
+
 function getColorForCategory(category) {
   switch (category) {
     case "한식": return "#c65a3c";
@@ -2986,6 +3055,7 @@ async function startApp() {
   document.getElementById("photospot-checkbox").addEventListener("change", applyFilters);
   document.getElementById("locate-btn").addEventListener("click", requestUserLocation);
   document.getElementById("roulette-btn").addEventListener("click", spinRoulette);
+  document.getElementById("taste-recommend-btn").addEventListener("click", generateTasteRecommendation);
   document.getElementById("clear-route-btn").addEventListener("click", clearRoute);
   document.getElementById("course-clear-btn").addEventListener("click", clearCourse);
   document.getElementById("course-recommend-btn").addEventListener("click", generateRecommendedCourse);

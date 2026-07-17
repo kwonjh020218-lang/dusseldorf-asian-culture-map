@@ -63,6 +63,21 @@ body {
 }
 #top-strip #roulette-btn:hover { opacity: 0.9; }
 
+#taste-recommend-btn {
+  display: block;
+  width: 100%;
+  border: none;
+  background: #7b3fbf;
+  color: #fff;
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  border-bottom: 2px solid #5c2f8f;
+}
+#taste-recommend-btn:hover { opacity: 0.92; }
+
 #app-container {
   flex: 1;
   display: flex;
