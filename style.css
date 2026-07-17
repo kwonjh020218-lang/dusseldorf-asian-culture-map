@@ -1,0 +1,566 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Pretendard", "Noto Sans KR", -apple-system, sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#app-header {
+  background: #1b2a4a;
+  color: #f4efe6;
+  padding: 1rem 1.5rem;
+  border-bottom: 3px solid #c65a3c;
+}
+
+#app-header h1 {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: #cfd6e4;
+  margin-top: 0.2rem;
+}
+
+/* ===== 상단 스트립: 레벨뱃지 + 룰렛을 한 줄로 압축 ===== */
+#top-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem;
+  background: #26385f;
+  border-bottom: 2px solid #c65a3c;
+}
+#top-strip #level-badge {
+  padding: 0;
+  background: none;
+  border-bottom: none;
+  color: #ffd8a8;
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex: 1;
+}
+#top-strip #roulette-btn {
+  border: none;
+  background: #c65a3c;
+  color: #fff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+#top-strip #roulette-btn:hover { opacity: 0.9; }
+
+#app-container {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+#sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  background: #faf7f2;
+  border-right: 1px solid #e0dccf;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+#filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem;
+  border-bottom: 1px solid #e0dccf;
+  background: #faf7f2;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+#search-input {
+  width: 100%;
+  border: 1px solid #d8d0bd;
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.85rem;
+  font-family: inherit;
+  background: #fff;
+  color: #1b2a4a;
+}
+
+#search-input:focus {
+  outline: none;
+  border-color: #c65a3c;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #1b2a4a;
+  cursor: pointer;
+  user-select: none;
+  margin-top: 0.2rem;
+}
+
+#category-buttons, #price-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.cat-btn {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #d8d0bd;
+  background: #fff;
+  color: #1b2a4a;
+  font-size: 0.78rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.cat-btn:hover {
+  background: #f0e9dc;
+}
+
+.cat-btn.active {
+  background: #1b2a4a;
+  color: #fff;
+  border-color: #1b2a4a;
+}
+
+#location-row {
+  display: flex;
+  gap: 0.4rem;
+}
+
+#locate-btn {
+  flex: 1;
+  border: 1px solid #3c7a5e;
+  background: #fff;
+  color: #3c7a5e;
+  font-size: 0.75rem;
+  padding: 0.5rem 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+#locate-btn:hover {
+  background: #f0f5f0;
+}
+
+#locate-btn.active {
+  background: #3c7a5e;
+  color: #fff;
+}
+
+#filter-toggle-btn {
+  width: 100%;
+  border: none;
+  background: none;
+  color: #7b6a4a;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 0.3rem 0;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+#filter-toggle-btn:hover { color: #c65a3c; }
+
+#filter-more {
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-bottom: 0.3rem;
+}
+#filter-more.expanded {
+  display: flex;
+}
+
+#place-list {
+  list-style: none;
+  flex: 1;
+}
+
+.place-item {
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid #eee5d8;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  position: relative;
+}
+
+.place-item:hover {
+  background: #f0e9dc;
+}
+
+.place-item.highlight-flash {
+  animation: flash-animation 1.5s ease-in-out 2;
+}
+
+@keyframes flash-animation {
+  0% { background-color: #faf7f2; }
+  50% { background-color: #fff2cc; }
+  100% { background-color: #faf7f2; }
+}
+
+.place-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.place-name {
+  font-weight: 600;
+  color: #1b2a4a;
+  flex: 1;
+}
+
+.place-category {
+  font-size: 0.75rem;
+  color: #c65a3c;
+  margin-top: 0.2rem;
+}
+
+.fav-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 2px;
+  line-height: 1;
+  color: #ccc;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.fav-btn:hover {
+  transform: scale(1.2);
+}
+
+.fav-btn.active {
+  color: #ffcc00;
+}
+
+.course-badge-btn {
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 2px;
+  line-height: 1;
+  opacity: 0.3;
+  filter: grayscale(1);
+  transition: transform 0.15s ease, opacity 0.15s ease, filter 0.15s ease;
+}
+.course-badge-btn:hover {
+  transform: scale(1.2);
+}
+.course-badge-btn.active {
+  opacity: 1;
+  filter: none;
+}
+
+#map {
+  flex: 1;
+  height: 100%;
+}
+
+.user-location-tri {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 18px solid #0066ff;
+  filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.4));
+}
+
+.popup-fav-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: 6px;
+  color: #ccc;
+  vertical-align: middle;
+  line-height: 1;
+}
+.popup-fav-btn.active {
+  color: #ffcc00;
+}
+
+/* ===== 룰렛 / 경로 버튼 ===== */
+#location-row #clear-route-btn {
+  width: auto;
+  flex: 1;
+  font-size: 0.72rem;
+  padding: 0.5rem 0.5rem;
+}
+#clear-route-btn {
+  width: 100%;
+  border: none;
+  padding: 0.6rem 0.7rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.82rem;
+  transition: transform 0.1s ease;
+}
+#clear-route-btn {
+  background: #fff;
+  color: #666;
+  border: 1px solid #d8d0bd;
+  font-weight: 600;
+}
+#clear-route-btn:hover { background: #f0e9dc; }
+
+/* ===== 방문 체크 버튼 ===== */
+.visit-btn {
+  background: none;
+  border: 1px solid #d8d0bd;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  padding: 2px 6px;
+  cursor: pointer;
+  color: #888;
+  margin-left: 4px;
+}
+.visit-btn.active {
+  background: #3c7a5e;
+  color: #fff;
+  border-color: #3c7a5e;
+}
+
+/* ===== 룰렛 결과 모달 ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(27, 42, 74, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-box {
+  background: #fdfbf7;
+  border-radius: 16px;
+  padding: 2rem 1.8rem;
+  text-align: center;
+  max-width: 280px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.modal-emoji {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+.modal-subtitle {
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 0.4rem;
+}
+.modal-place-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1b2a4a;
+  margin-bottom: 1.2rem;
+  line-height: 1.4;
+}
+.modal-close-btn {
+  background: #c65a3c;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ===== 나만의 코스 패널 ===== */
+#course-panel {
+  border-bottom: 1px solid #e0dccf;
+  padding: 0.8rem 1rem;
+  background: #fdf6ec;
+}
+#course-header {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1b2a4a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+#course-toggle-arrow {
+  color: #999;
+  font-size: 0.7rem;
+}
+#course-body {
+  display: none;
+  margin-top: 0.5rem;
+}
+#course-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.course-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #fff;
+  border: 1px solid #e8dfc8;
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.78rem;
+}
+.course-item .course-num {
+  background: #c65a3c;
+  color: #fff;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  flex-shrink: 0;
+}
+.course-item .course-name {
+  flex: 1;
+  color: #1b2a4a;
+  font-weight: 600;
+}
+.course-item button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: #888;
+  padding: 1px 3px;
+}
+#course-actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+#course-actions button {
+  flex: 1;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+#course-clear-btn { background: #fff; color: #888; border: 1px solid #d8d0bd !important; }
+
+#course-empty {
+  font-size: 0.75rem;
+  color: #999;
+  line-height: 1.4;
+  padding: 0.3rem 0;
+}
+#course-start-info {
+  font-size: 0.72rem;
+  color: #3c7a5e;
+  font-weight: 600;
+  margin-top: 0.4rem;
+}
+#course-recommend-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  background: #7b3fbf;
+  color: #fff;
+}
+#course-recommend-btn:hover { opacity: 0.9; }
+
+/* ===== 장소 마커 (L.marker + divIcon 방식 - 클러스터링과 궁합이 좋아 클릭/호버가 안정적임) ===== */
+.place-marker-icon {
+  background: transparent !important;
+  border: none !important;
+}
+.place-marker-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.place-marker-dot.marker-pulse {
+  transform: scale(1.8);
+  border-color: #ffcc00;
+  border-width: 3px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+}
+
+/* ===== 마커 호버 툴팁 ===== */
+.place-tooltip {
+  font-family: "Pretendard", "Noto Sans KR", -apple-system, sans-serif;
+  font-size: 12px;
+  color: #1b2a4a;
+  background: #fff;
+  border: 1px solid #d8d0bd;
+  border-radius: 6px;
+  padding: 4px 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* ===== 라우팅 패널(턴바이턴) 숨김 - 지도가 지저분해지지 않도록 ===== */
+.leaflet-routing-container {
+  display: none !important;
+}
+
+/* ===== 모바일 반응형 ===== */
+@media (max-width: 768px) {
+  #app-container {
+    flex-direction: column-reverse;
+  }
+  #sidebar {
+    width: 100%;
+    height: 46vh;
+    border-right: none;
+    border-top: 2px solid #e0dccf;
+  }
+  #map {
+    height: 54vh;
+  }
+}
+  
