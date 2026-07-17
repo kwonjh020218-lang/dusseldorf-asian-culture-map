@@ -11,11 +11,11 @@
 
   <header id="app-header">
     <h1>뒤셀도르프 아시안 컬처 맵</h1>
-    <p class="subtitle">맛집·마트부터 만화카페·서점·포토존까지 🇩🇪🎌</p>
+    <p class="subtitle">맛집·마트부터 만화카페·서점·명소까지</p>
   </header>
 
   <div id="top-strip">
-    <div id="level-badge">Lv.0 · 아직 시작 전이에요</div>
+    <div id="level-badge">Lv.0 · 시작 전</div>
     <button id="roulette-btn" type="button">🎲 오늘 뭐 하지?</button>
   </div>
 
@@ -23,9 +23,9 @@
   <div id="roulette-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="roulette-result-name">
     <div class="modal-box">
       <div class="modal-emoji" aria-hidden="true">🎯</div>
-      <div class="modal-subtitle">오늘 당신의 운명은...</div>
+      <div class="modal-subtitle">오늘의 추천</div>
       <div class="modal-place-name" id="roulette-result-name"></div>
-      <button class="modal-close-btn" onclick="closeRouletteModal()">가보자!</button>
+      <button class="modal-close-btn" onclick="closeRouletteModal()">확인</button>
     </div>
   </div>
 
@@ -82,7 +82,7 @@
           <span id="course-toggle-arrow">▸</span>
         </div>
         <div id="course-body">
-          <div id="course-empty">아직 담은 곳이 없어요. 팝업에서 "🚩 코스에 담기"를 누르거나, 아래 "🎲 추천 코스 짜줘"를 눌러보세요.</div>
+          <div id="course-empty">아직 담은 곳이 없어요. 장소를 담거나 추천 코스를 받아보세요.</div>
           <ol id="course-list"></ol>
           <div id="course-start-info" style="display:none;"></div>
           <div id="course-actions" style="display:none;">

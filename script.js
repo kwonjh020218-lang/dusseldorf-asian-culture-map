@@ -2287,11 +2287,11 @@ window.toggleVisited = function(id) {
 
 function getLevelTitle(count) {
   const total = places.length;
-  if (count === 0) return "아직 시작 전이에요";
-  if (count < total * 0.1) return "아장아장 아시아 초보 🐣";
-  if (count < total * 0.3) return "임머만 거리 단골 🍜";
-  if (count < total * 0.6) return "리틀 도쿄 인싸 🍣";
-  return "리틀 도쿄 명예 촌장 👑";
+  if (count === 0) return "시작 전";
+  if (count < total * 0.1) return "초보";
+  if (count < total * 0.3) return "단골";
+  if (count < total * 0.6) return "고수";
+  return "마스터";
 }
 
 function updateLevelBadge() {
@@ -2547,7 +2547,7 @@ function renderCoursePanel() {
   actionsEl.style.display = course.length > 0 ? "flex" : "none";
   startInfoEl.textContent = userLocation
     ? "📍 출발점: 내 위치"
-    : "📍 출발점: 뒤셀도르프 중앙역(Hbf) (기본값 - '내 위치' 버튼을 누르면 바뀜)";
+    : "📍 출발점: 뒤셀도르프 중앙역";
   startInfoEl.style.display = course.length > 0 ? "block" : "none";
 }
 
@@ -2825,7 +2825,7 @@ function applyFilters() {
     });
     const marker = L.marker([place.lat, place.lng], { icon: markerIcon });
 
-    marker.bindPopup(() => buildPopupContent(place));
+    marker.bindPopup(() => buildPopupContent(place), { maxWidth: 260, minWidth: 200 });
 
     // 마우스를 올리면(클릭 안 해도) 이름/카테고리/가격이 바로 보이는 호버 툴팁
     const priceForTooltip = place.priceLevel ? PRICE_RANGES[place.priceLevel] : "";
