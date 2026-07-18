@@ -1,9 +1,4 @@
-
 // ===== XSS 방지: 사용자/외부 데이터를 HTML에 꽂아넣기 전에 이스케이프 =====
-// 지금은 place 데이터가 전부 고정값(하드코딩)이라 위험하지 않지만,
-// 나중에 사용자가 직접 장소를 등록/수정하는 기능이 생기면 이 처리가 없으면
-// 악성 스크립트를 이름/설명에 넣어서 다른 사용자 브라우저에서 실행시키는
-// XSS 공격이 가능해짐. 그런 상황을 미리 대비해 모든 동적 텍스트에 적용.
 function escapeHtml(str) {
   if (str === null || str === undefined) return "";
   return String(str)
@@ -58,7 +53,6 @@ const ROUTING_CSS_URLS = [
   "https://cdn.jsdelivr.net/npm/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
 ];
 
-// 여러 CDN 주소를 순서대로 시도하는 범용 함수. checkFn으로 실제 로드 성공 여부를 확인.
 async function loadFromCdns(urls, checkFn) {
   for (const url of urls) {
     try {
@@ -71,45 +65,30 @@ async function loadFromCdns(urls, checkFn) {
   return false;
 }
 
-// CSS는 실패해도 앱이 죽지 않으므로, 여러 후보 중 첫 번째만 시도(실패해도 무시하고 진행)
 function loadCssWithFallback(urlList) {
   loadCss(urlList[0]);
 }
 
-// useCluster, useRouting은 파일 하단 "애플리케이션 상태" 섹션에서 선언됨
-// (라이브러리 로딩 성공 여부에 따라 loadAllLibraries()가 값을 설정함)
-
 async function loadAllLibraries() {
-  // 1. Leaflet 핵심 라이브러리 (필수 - 실패하면 지도 자체가 안 뜸)
   loadCssWithFallback(LEAFLET_CSS_URLS);
   const leafletOk = await loadFromCdns(LEAFLET_JS_URLS, () => typeof L !== "undefined");
   if (!leafletOk) return false;
 
-  // 2. 마커 클러스터링 (선택 - 실패해도 기본 마커로 동작)
   CLUSTER_CSS_URLS.forEach((pair) => loadCssWithFallback(pair));
   useCluster = await loadFromCdns(CLUSTER_JS_URLS, () => typeof L.markerClusterGroup === "function");
 
-  // 3. 경로 안내 (선택 - 실패해도 나머지 기능은 정상 동작)
   loadCssWithFallback(ROUTING_CSS_URLS);
   useRouting = await loadFromCdns(ROUTING_JS_URLS, () => typeof L.Routing !== "undefined");
 
   return true;
 }
 
-// ===== 장소 데이터: Supabase(진짜 PostgreSQL 데이터베이스)에서 가져옴 =====
-// 예전에는 이 자리에 122곳 데이터가 코드 안에 통째로 박혀있었는데,
-// 이제는 별도 데이터베이스에 저장해두고 REST API로 fetch해서 가져오는 구조로 바꿈.
-// (이 anon key는 "읽기 전용" 공개키라 코드에 노출돼도 안전함 - Supabase의 Row Level
-//  Security 정책으로 "누구나 조회만 가능, 쓰기/수정/삭제는 불가능"하게 막아뒀음)
 const SUPABASE_URL = "https://txqazmmndbpcbokpipbp.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_0xcR1WbZcpIg271GEsnBYw_WWPK1uu7";
 
-let places = []; // 처음엔 비어있다가, fetchPlaces()가 끝나면 채워짐
-let basePlaces = []; // 한국어 원본 데이터 (언어 전환 시 이걸 기준으로 다시 만듦)
+let places = []; 
+let basePlaces = []; 
 
-// 데이터베이스 컬럼명(snake_case: has_vegan)을 코드 전체에서 쓰는
-// 필드명(camelCase: hasVegan)으로 변환. place_translations도 lang을 키로 하는
-// 객체({ en: {note, menu}, de: {note, menu} })로 정리해서 붙여줌.
 function normalizePlace(row) {
   const translations = {};
   (row.place_translations || []).forEach((tr) => {
@@ -129,7 +108,7 @@ function normalizePlace(row) {
     note: row.note,
     priceLevel: row.price_level,
     menu: row.menu || [],
-    _translations: translations,
+    _translations: translations, 
   };
 }
 
@@ -150,23 +129,9 @@ async function fetchPlaces() {
 
   const rows = await response.json();
   places = rows.map(normalizePlace);
-  basePlaces = places.map((p) => ({ ...p, _translations: p._translations }));
+  basePlaces = places.map((p) => ({ ...p, _translations: p._translations })); 
 }
 
-  if (!response.ok) {
-    throw new Error(`Supabase 응답 오류: ${response.status}`);
-  }
-
-  const rows = await response.json();
-  places = rows.map(normalizePlace);
-  basePlaces = places.map((p) => ({ ...p, _translations: p._translations })); // 한국어 원본 + 번역 데이터를 함께 보관
-}
-
-
-// ===== localStorage 안전 래퍼 =====
-// 사파리 시크릿 모드, 브라우저 저장공간 차단 설정 등에서는 localStorage 접근 자체가
-// 예외(에러)를 던질 수 있음. try/catch로 감싸서, 그런 환경에서도 앱이 죽지 않고
-// "저장은 안 되지만 이번 세션에서는 정상 동작"하도록 만듦.
 function safeStorageGet(key, defaultValue) {
   try {
     const raw = localStorage.getItem(key);
@@ -185,32 +150,26 @@ function safeStorageSet(key, value) {
   }
 }
 
-// =====================================================================
-// 애플리케이션 상태 (Application State)
-// =====================================================================
-// 파일 전체에서 쓰는 상태 변수들을 한 군데에 모아뒀어요.
-// 참고: `{ favorites: [...] }`처럼 하나의 객체로 완전히 묶는 것도 고려했지만,
-// 이 파일 안에서 `map`이라는 이름이 (1) Leaflet 지도 인스턴스, (2) `places.map(...)`
-// 같은 배열 메서드 이 두 가지 뜻으로 동시에 쓰이고 있어서, 기계적으로 전부
-// `AppState.map`으로 바꾸면 배열 메서드 호출까지 깨질 위험이 있었어요.
-// 그래서 안전한 선에서, "따로따로 흩어져 있던 걸 한 곳에 모아 문서화"하는
-// 절충안을 택했어요. (실제 서비스라면 React 등으로 옮기면서 자연스럽게 해결될 부분)
-let favorites = safeStorageGet("favorites", []); // 즐겨찾기한 장소 id 배열
-let visitedPlaces = safeStorageGet("visitedPlaces", []); // 방문 체크한 장소 id 배열 (레벨 계산에 사용)
-let currentCategory = "전체"; // 현재 선택된 카테고리 필터
-let currentPrice = "전체"; // 현재 선택된 가격대 필터
-let userLocation = null; // { lat, lng } 또는 null (GPS 권한 허용 시 채워짐)
-let isRealGpsLocation = false; // true=실제 GPS 위치, false=GPS 실패 시 중앙역으로 대체된 상태
-let markerMap = {}; // { placeId: LeafletMarker } - id로 마커를 빠르게 찾기 위한 캐시
-let userMarker = null; // 내 위치를 표시하는 파란 세모 마커
-let markerLayer = null; // 클러스터 그룹 또는 일반 레이어그룹 (장소 마커들을 담는 컨테이너)
-let routingControl = null; // 현재 지도에 그려진 경로(Leaflet Routing Machine 컨트롤)
-let course = safeStorageGet("course", []); // 나만의 코스: place id 배열, 추가한 순서 = 방문 순서
-let map = null; // Leaflet 지도 인스턴스 본체
-let useCluster = false; // 마커 클러스터링 라이브러리 로드 성공 여부
-let useRouting = false; // 경로 안내 라이브러리 로드 성공 여부
-let courseExpanded = false; // "나만의 코스" 패널이 펼쳐져 있는지 여부
-let recommendCourseClickCount = 0; // 추천 코스 버튼 클릭 횟수 (첫 클릭=최단거리, 이후=랜덤 변주)
+let favorites = safeStorageGet("favorites", []); 
+let visitedPlaces = safeStorageGet("visitedPlaces", []); 
+let currentCategory = "전체"; 
+let currentPrice = "전체"; 
+let userLocation = null; 
+let isRealGpsLocation = false; 
+let markerMap = {}; 
+let userMarker = null; 
+let markerLayer = null; 
+let routingControl = null; 
+let course = safeStorageGet("course", []); 
+let map = null; 
+let useCluster = false; 
+let useRouting = false; 
+let courseExpanded = false; 
+let recommendCourseClickCount = 0; 
+
+function saveCourse() {
+  safeStorageSet("course", course);
+}
 
 window.toggleFavorite = function(id) {
   const index = favorites.indexOf(id);
@@ -221,8 +180,6 @@ window.toggleFavorite = function(id) {
   }
   safeStorageSet("favorites", favorites);
 
-  // "즐겨찾기만 보기"가 켜져 있으면 목록 자체가 바뀌어야 하니 전체 재계산이 필요함.
-  // 꺼져 있으면 그 아이템/팝업만 살짝 갱신 (지도 전체를 다시 그리면 열려있던 팝업이 닫혀버림)
   const favOnly = document.getElementById("fav-only-checkbox").checked;
   if (favOnly) {
     applyFilters();
@@ -232,7 +189,6 @@ window.toggleFavorite = function(id) {
   }
 };
 
-// ===== 방문 체크(레벨 시스템) =====
 window.toggleVisited = function(id) {
   const index = visitedPlaces.indexOf(id);
   if (index === -1) {
@@ -242,7 +198,6 @@ window.toggleVisited = function(id) {
   }
   safeStorageSet("visitedPlaces", visitedPlaces);
   updateLevelBadge();
-  // 방문 체크는 목록/필터에 영향을 주지 않으니 전체 재렌더 필요 없음
   refreshListItem(id);
   refreshPopupIfOpen(id);
 };
@@ -289,11 +244,8 @@ function findNearestCafe(place) {
 function renderDistanceFromUser(place) {
   if (!userLocation) return "";
   const km = getDistanceKm(userLocation.lat, userLocation.lng, place.lat, place.lng);
-  
-  // '내 위치', '중앙역' 단어를 언어 상태에 맞게 가져오기
   const label = isRealGpsLocation ? t("courseStartReal").replace("📍 출발점: ", "") : t("courseStartFallback").replace("📍 출발점: ", "");
   
-  // 한국어 / 영어 / 독일어 어순과 표현 방식 분기
   if (currentLang === "ko") {
     return km < 1 ? `📍 ${label}에서 약 ${Math.round(km * 1000)}m` : `📍 ${label}에서 약 ${km.toFixed(1)}km`;
   } else if (currentLang === "de") {
@@ -346,7 +298,6 @@ function buildPopupContent(place) {
   if (place.type === "restaurant") {
     const result = findNearestCafe(place);
     if (result) {
-      // 1) '근처 카페·디저트' 안내문 다국어 변수 설정
       let recTitle = "☕ 근처 카페·디저트:";
       let approxText = `약 ${Math.round(result.distanceKm * 1000)}m`;
       if (currentLang === "en") { recTitle = "☕ Nearby Cafe/Dessert:"; approxText = `approx. ${Math.round(result.distanceKm * 1000)}m`; }
@@ -363,7 +314,6 @@ function buildPopupContent(place) {
   const isInCourse = course.includes(place.id);
   const distanceHtml = renderDistanceFromUser(place) ? `<div style="margin-top:4px;font-size:0.78rem;color:#3c7a5e;font-weight:600;">${renderDistanceFromUser(place)}</div>` : "";
   
-  // 2) '여기서 경로 보기' 버튼 다국어 번역 설정
   let routeBtnText = "🚗 여기까지 경로 보기";
   if (currentLang === "en") routeBtnText = "🚗 Route to here";
   if (currentLang === "de") routeBtnText = "🚗 Route hierher";
@@ -371,18 +321,15 @@ function buildPopupContent(place) {
     ? `<button onclick="showRouteTo(${place.id});" style="margin-top:6px;width:100%;padding:5px;border:1px solid #1b2a4a;background:#fff;color:#1b2a4a;border-radius:6px;cursor:pointer;font-size:0.75rem;font-family:inherit;">${routeBtnText}</button>`
     : "";
 
-  // 3) '코스에 담기 / 빼기' 버튼 다국어 번역 설정
   let courseBtnText = isInCourse ? '✕ 코스에서 빼기' : '🚩 코스에 담기';
   if (currentLang === "en") courseBtnText = isInCourse ? '✕ Remove from Course' : '🚩 Add to Course';
   if (currentLang === "de") courseBtnText = isInCourse ? '✕ Aus Route entfernen' : '🚩 In Route hinzufügen';
   const courseBtnHtml = `<button onclick="toggleCourse(${place.id});" style="margin-top:4px;width:100%;padding:5px;border:1px solid ${isInCourse ? '#c65a3c' : '#d8d0bd'};background:${isInCourse ? '#c65a3c' : '#fff'};color:${isInCourse ? '#fff' : '#666'};border-radius:6px;cursor:pointer;font-size:0.75rem;font-family:inherit;font-weight:600;">${courseBtnText}</button>`;
 
-  // 4) '가봤어요 / 완료' 버튼 다국어 번역 설정
   let visitBtnText = isVisited ? '✔️ 완료' : '📍 가봤어요';
   if (currentLang === "en") visitBtnText = isVisited ? '✔️ Visited' : '📍 Been here';
   if (currentLang === "de") visitBtnText = isVisited ? '✔️ Besucht' : '📍 Hier gewesen';
 
-  // 5) '구글맵 리뷰 보기' 버튼 다국어 번역 설정
   let gmapsBtnText = "🗺️ 구글맵에서 사진·리뷰 보기";
   if (currentLang === "en") gmapsBtnText = "🗺️ View Photos & Reviews on Google Maps";
   if (currentLang === "de") gmapsBtnText = "🗺️ Fotos & Bewertungen auf Google Maps";
@@ -412,8 +359,6 @@ function buildPopupContent(place) {
   `;
 }
 
-// ===== 경로(라우팅) 기능 =====
-// 무료 공개 OSRM 데모 서버를 사용합니다. 차량 기준 경로이며, 참고용 예상 경로입니다.
 window.showRouteTo = function(placeId) {
   if (!useRouting) {
     alert(t("alertRoutingLibFailed"));
@@ -441,7 +386,7 @@ window.showRouteTo = function(placeId) {
     draggableWaypoints: false,
     fitSelectedRoutes: true,
     show: false,
-    createMarker: () => null, // 우리 마커를 이미 쓰고 있으니 라우팅 라이브러리의 기본 마커는 끔
+    createMarker: () => null, 
     lineOptions: { styles: [{ color: "#c65a3c", weight: 5, opacity: 0.8 }] },
   }).addTo(map);
 };
@@ -453,12 +398,6 @@ function clearRoute() {
   }
 }
 
-// ===== 나만의 코스 빌더 =====
-function saveCourse() {
-  safeStorageSet("course", course);
-}
-
-// 뒤셀도르프 중앙역 좌표 - 내 위치를 아직 안 켰을 때 코스 출발점 기본값으로 사용
 const DUSSELDORF_HBF = { lat: 51.219853, lng: 6.794314 };
 
 window.toggleCourse = function (id) {
@@ -466,18 +405,15 @@ window.toggleCourse = function (id) {
   const wasEmpty = course.length === 0;
   if (idx === -1) {
     course.push(id);
-    if (wasEmpty) setCourseExpanded(true); // 첫 장소를 담으면 패널이 자동으로 펼쳐짐
+    if (wasEmpty) setCourseExpanded(true); 
   } else {
     course.splice(idx, 1);
   }
   saveCourse();
   renderCoursePanel();
   updateCourseRouteIfNeeded();
-  // 코스는 목록/필터에 영향을 주지 않으니 전체 재렌더 필요 없음.
-  // (예전엔 여기서 applyFilters()를 불러서 지도를 통째로 다시 그렸는데,
-  //  그러면 방금 열려있던 팝업이 그대로 사라져버려서 "추가했는데 아무 반응 없음"처럼 보였음)
   refreshPopupIfOpen(id);
-  refreshListItem(id); // 코스 뱃지 갱신
+  refreshListItem(id); 
 };
 
 window.moveCourseItem = function (id, direction) {
@@ -496,7 +432,7 @@ function clearCourse() {
   saveCourse();
   renderCoursePanel();
   clearRoute();
-  setCourseExpanded(false); // 비우면 다시 접어둠
+  setCourseExpanded(false); 
   affectedIds.forEach((id) => refreshListItem(id));
 }
 
@@ -544,14 +480,10 @@ function renderCoursePanel() {
   });
 
   actionsEl.style.display = course.length > 0 ? "flex" : "none";
-  startInfoEl.textContent = isRealGpsLocation
-    ? t("courseStartReal")
-    : t("courseStartFallback");
+  startInfoEl.textContent = isRealGpsLocation ? t("courseStartReal") : t("courseStartFallback");
   startInfoEl.style.display = course.length > 0 ? "block" : "none";
 }
 
-// 코스에 담긴 장소들을 순서대로 이어서 경로로 그림.
-// 출발점은 내 위치가 있으면 내 위치, 없으면 뒤셀도르프 중앙역을 기본값으로 사용 (항상 출발점이 있음)
 function drawCourseRoute() {
   if (!useRouting || course.length < 1) return;
 
@@ -580,7 +512,6 @@ function drawCourseRoute() {
   }).addTo(map);
 }
 
-// 코스가 바뀔 때마다(추가/삭제/순서변경) 자동으로 호출 - 비어있으면 경로를 지우고, 있으면 다시 그림
 function updateCourseRouteIfNeeded() {
   if (course.length === 0) {
     clearRoute();
@@ -589,9 +520,6 @@ function updateCourseRouteIfNeeded() {
   }
 }
 
-// ===== 추천 코스 짜기 =====
-// 현재 필터 조건을 존중하면서, "식당 → 가장 가까운 카페/디저트 → 가장 가까운 놀거리(오락/서점/명소/굿즈)"
-// 순서로 3곳을 자동으로 골라 코스를 만들어줌. 기존 코스는 덮어씀.
 function generateRecommendedCourse() {
   const pool = getFilteredPlaces();
   const restaurants = pool.filter((p) => p.type === "restaurant");
@@ -607,8 +535,6 @@ function generateRecommendedCourse() {
   const isFirstClick = recommendCourseClickCount === 0;
   recommendCourseClickCount++;
 
-  // 첫 클릭: 진짜 제일 가까운 곳 하나로 결정.
-  // 두 번째 클릭부터: 가까운 후보 5곳 중에서 무작위로 골라서 누를 때마다 다른 조합이 나오게 함.
   const pickNear = (list, from) => {
     const sorted = list.slice().sort(
       (a, b) => getDistanceKm(from.lat, from.lng, a.lat, a.lng) - getDistanceKm(from.lat, from.lng, b.lat, b.lng)
@@ -638,13 +564,10 @@ function generateRecommendedCourse() {
   setCourseExpanded(true);
   updateCourseRouteIfNeeded();
 
-  // 바뀐 아이템들(예전 코스 + 새 코스)의 리스트 뱃지 갱신
   const changedIds = Array.from(new Set([...previousIds, ...course]));
   changedIds.forEach((id) => refreshListItem(id));
 }
 
-// ===== 룰렛 기능 =====
-// 이제 "오늘 뭐 먹지"뿐 아니라 만화카페·서점·굿즈샵 등 문화 스팟도 후보에 포함
 function spinRoulette() {
   const candidates = getFilteredPlaces().filter((p) => p.category !== "마트");
   const pool = candidates.length > 0 ? candidates : places.filter((p) => p.category !== "마트");
@@ -663,10 +586,6 @@ window.closeRouletteModal = function () {
   document.getElementById("roulette-modal").style.display = "none";
 };
 
-// ===== 취향 맞춤 추천 =====
-// 즐겨찾기·방문체크한 곳들의 공통점(매운맛/비건 비율, 자주 가는 카테고리)을 계산해서
-// 아직 안 가본 곳 중 취향에 가장 잘 맞는 곳을 골라주는 규칙 기반 추천 로직.
-// (머신러닝 모델이 아니라 "패턴 세기 + 조건 매칭"이지만, 추천 시스템의 기본 원리는 동일함)
 function generateTasteRecommendation() {
   const likedIds = Array.from(new Set([...favorites, ...visitedPlaces]));
   const liked = places.filter((p) => likedIds.includes(p.id));
@@ -676,13 +595,11 @@ function generateTasteRecommendation() {
     return;
   }
 
-  // 1. 매운맛/비건 선호도 계산 (찜한 곳의 절반 이상이면 "선호"로 판단)
   const spicyRatio = liked.filter((p) => p.hasSpicy).length / liked.length;
   const veganRatio = liked.filter((p) => p.hasVegan).length / liked.length;
   const prefersSpicy = spicyRatio >= 0.5;
   const prefersVegan = veganRatio >= 0.5;
 
-  // 2. 가장 자주 찜한 카테고리 상위 2개
   const categoryCounts = {};
   liked.forEach((p) => {
     categoryCounts[p.category] = (categoryCounts[p.category] || 0) + 1;
@@ -692,7 +609,6 @@ function generateTasteRecommendation() {
     .slice(0, 2)
     .map(([cat]) => cat);
 
-  // 3. 아직 안 찜한 곳들 중, 위 조건에 맞을 때마다 점수를 매겨서 후보 선정
   const scored = places
     .filter((p) => !likedIds.includes(p.id))
     .map((p) => {
@@ -713,7 +629,6 @@ function generateTasteRecommendation() {
   const bestMatches = scored.filter((c) => c.score === topScore);
   const pick = bestMatches[Math.floor(Math.random() * bestMatches.length)].place;
 
-  // 4. "왜 추천했는지" 이유 문장 만들기
   const reasons = [];
   if (prefersSpicy && pick.hasSpicy) reasons.push(t("reasonSpicy"));
   if (prefersVegan && pick.hasVegan) reasons.push(t("reasonVegan"));
@@ -750,9 +665,6 @@ function getColorForCategory(category) {
   }
 }
 
-
-// 검색어/카테고리/가격/비건/매운맛/즐겨찾기/포토스팟 조건을 모두 반영해 걸러진 배열을 반환.
-// applyFilters(렌더링)와 spinRoulette(룰렛 대상 선정) 둘 다 이 함수를 재사용.
 function getFilteredPlaces() {
   const searchText = document.getElementById("search-input").value.trim().toLowerCase();
   const veganOnly = document.getElementById("vegan-checkbox").checked;
@@ -787,11 +699,6 @@ function getFilteredPlaces() {
   return filtered;
 }
 
-// 리스트에서 장소를 클릭했을 때, 어떤 마커인지 확실히 보이도록 잠깐 크게 만들었다가 되돌림.
-// L.marker(divIcon 아이콘)는 setStyle이 없는 타입이라, 아이콘의 실제 DOM 요소에
-// CSS 클래스를 붙였다 떼는 방식으로 처리함.
-// 사이드바 리스트 아이템 하나의 내용물 HTML을 만드는 함수.
-// applyFilters(전체 그리기)와 refreshListItem(부분 갱신) 둘 다 이 함수를 재사용함.
 function buildListItemInnerHtml(place) {
   const isFav = favorites.includes(place.id);
   const isVisited = visitedPlaces.includes(place.id);
@@ -803,13 +710,13 @@ function buildListItemInnerHtml(place) {
     <div class="place-item-header">
       <div class="place-name">${escapeHtml(place.name)} ${renderTags(place)}</div>
       <span style="white-space:nowrap;">
-        <button class="visit-btn ${isVisited ? 'active' : ''}" onclick="toggleVisited(${place.id}); event.stopPropagation();" aria-label="${isVisited ? '방문 완료 취소하기' : '가본 곳으로 표시하기'}" aria-pressed="${isVisited}">
+        <button class="visit-btn ${isVisited ? 'active' : ''}" onclick="toggleVisited(${place.id}); event.stopPropagation();" aria-label="Visit toggle" aria-pressed="${isVisited}">
           ${isVisited ? '✔️' : '📍'}
         </button>
-        <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite(${place.id}); event.stopPropagation();" aria-label="${isFav ? '즐겨찾기 해제' : '즐겨찾기에 추가'}" aria-pressed="${isFav}">
+        <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite(${place.id}); event.stopPropagation();" aria-label="Favorite toggle" aria-pressed="${isFav}">
           ${isFav ? '★' : '☆'}
         </button>
-        <button class="course-badge-btn ${isInCourse ? 'active' : ''}" onclick="toggleCourse(${place.id}); event.stopPropagation();" aria-label="${isInCourse ? '코스에서 빼기' : '코스에 담기'}" aria-pressed="${isInCourse}">
+        <button class="course-badge-btn ${isInCourse ? 'active' : ''}" onclick="toggleCourse(${place.id}); event.stopPropagation();" aria-label="Course toggle" aria-pressed="${isInCourse}">
           🚩
         </button>
       </span>
@@ -819,8 +726,6 @@ function buildListItemInnerHtml(place) {
   `;
 }
 
-// 즐겨찾기/방문체크/코스추가 버튼을 눌렀을 때 지도 전체를 다시 그리지 않고,
-// 딱 그 리스트 아이템 하나만 새로고침 (전체 재렌더는 느리고, 열려있던 팝업도 닫혀버림)
 function refreshListItem(id) {
   const place = places.find((p) => p.id === id);
   const li = document.getElementById(`place-item-${id}`);
@@ -828,8 +733,6 @@ function refreshListItem(id) {
   li.innerHTML = buildListItemInnerHtml(place);
 }
 
-// 지금 열려있는 팝업이 있으면, 팝업을 닫지 않고 내용만 새로고침
-// (즐겨찾기 별 표시나 코스 버튼 상태가 바로 바뀐 걸 보여주기 위함)
 function refreshPopupIfOpen(id) {
   const marker = markerMap[id];
   const place = places.find((p) => p.id === id);
@@ -842,17 +745,13 @@ function refreshPopupIfOpen(id) {
 
 function pulseMarker(marker) {
   const el = marker.getElement && marker.getElement();
-  if (!el) return; // 클러스터에 가려져서 아직 실제로 화면에 없는 경우
+  if (!el) return; 
   const dot = el.querySelector(".place-marker-dot");
   if (!dot) return;
   dot.classList.add("marker-pulse");
   setTimeout(() => dot.classList.remove("marker-pulse"), 1500);
 }
 
-// 마커로 지도를 이동시키고 팝업을 열고 강조하는 공용 함수.
-// 클러스터 모드에서는 zoomToShowLayer가 지도 이동을 전담해야 콜백이 확실히 실행되므로
-// 미리 map.setView를 부르지 않음. 혹시 라이브러리 콜백이 어떤 이유로든 안 불리는 경우를
-// 대비해 1.2초 안전장치(fallback)도 같이 걸어둠.
 function focusOnMarker(place, marker, targetZoom) {
   let done = false;
   const finish = () => {
@@ -864,7 +763,7 @@ function focusOnMarker(place, marker, targetZoom) {
 
   if (useCluster && markerLayer.zoomToShowLayer) {
     markerLayer.zoomToShowLayer(marker, finish);
-    setTimeout(finish, 1200); // 안전장치
+    setTimeout(finish, 1200); 
   } else {
     map.setView([place.lat, place.lng], targetZoom);
     finish();
@@ -876,7 +775,6 @@ function applyFilters() {
 
   const filtered = getFilteredPlaces();
 
-  // 클러스터 그룹(또는 일반 레이어그룹)을 통째로 비우고 다시 채움
   markerLayer.clearLayers();
   markerMap = {};
 
@@ -903,7 +801,6 @@ function applyFilters() {
 
     marker.bindPopup(() => buildPopupContent(place), { maxWidth: 260, minWidth: 200 });
 
-    // 마우스를 올리면(클릭 안 해도) 이름/카테고리/가격이 바로 보이는 호버 툴팁
     const priceForTooltip = place.priceLevel ? PRICE_RANGES[place.priceLevel] : "";
     marker.bindTooltip(
       `<strong>${escapeHtml(place.name)}</strong><br><span style="font-size:11px;color:#666;">${place.category}${priceForTooltip ? " · " + priceForTooltip : ""}</span>`,
@@ -929,7 +826,6 @@ function applyFilters() {
     li.id = `place-item-${place.id}`;
     li.innerHTML = buildListItemInnerHtml(place);
 
-    // 리스트 클릭 시 지도 이동 + 팝업 열기 + 마커 강조(펄스) - 공용 함수 사용
     li.addEventListener("click", () => {
       focusOnMarker(place, marker, 15);
     });
@@ -940,9 +836,7 @@ function applyFilters() {
 
 function drawUserMarker(loc, popupText) {
   const btn = document.getElementById("locate-btn");
-  btn.textContent = isRealGpsLocation
-    ? t("locateActiveReal")
-    : t("locateActiveFallback");
+  btn.textContent = isRealGpsLocation ? t("locateActiveReal") : t("locateActiveFallback");
   btn.classList.add("active");
 
   if (userMarker) map.removeLayer(userMarker);
@@ -959,8 +853,8 @@ function drawUserMarker(loc, popupText) {
   map.setView([loc.lat, loc.lng], 14);
 
   applyFilters();
-  renderCoursePanel(); // 출발점 안내 문구("내 위치" ↔ "중앙역 기본값") 갱신
-  updateCourseRouteIfNeeded(); // 코스가 이미 있었다면 실제 위치 기준으로 다시 그림
+  renderCoursePanel(); 
+  updateCourseRouteIfNeeded(); 
 }
 
 function requestUserLocation() {
@@ -986,9 +880,6 @@ function requestUserLocation() {
   );
 }
 
-// ===== 언어 전환 =====
-// 정적으로 박혀있는 UI 텍스트들을 현재 언어(currentLang)에 맞게 다시 채워 넣음.
-// 동적으로 상태에 따라 바뀌는 텍스트(내위치 버튼, 코스 출발점 등)는 각자의 함수에서 t()를 직접 부름.
 function applyUIText() {
   document.getElementById("app-header").querySelector("h1").textContent = t("headerTitle");
   document.getElementById("app-header").querySelector(".subtitle").textContent = t("headerSubtitle");
@@ -1038,14 +929,13 @@ function setLanguage(lang) {
   currentLang = lang;
   document.querySelectorAll(".lang-btn").forEach((b) => b.classList.toggle("active", b.dataset.lang === lang));
 
-  applyPlaceTranslations(lang); // 장소 설명/메뉴를 해당 언어로 교체
-  applyUIText(); // 버튼/라벨 등 고정 텍스트 갱신
+  applyPlaceTranslations(lang); 
+  applyUIText(); 
   refreshCategoryAndPriceButtonLabels();
   updateLevelBadge();
   renderCoursePanel();
-  applyFilters(); // 리스트/팝업/툴팁이 새 언어로 다시 그려짐
+  applyFilters(); 
   
-  // [실시간 갱신 기능 추가] 국기를 눌렀을 때 현재 맵에 열려있는 말풍선 팝업창의 텍스트도 강제 갱신
   places.forEach((place) => {
     refreshPopupIfOpen(place.id);
   });
@@ -1071,8 +961,6 @@ async function startApp() {
     attribution: "&copy; OpenStreetMap contributors",
   }).addTo(map);
 
-  // 마커 99개를 한 화면에 다 찍으면 지저분하니, 클러스터링 라이브러리가 로드됐으면 그걸 쓰고
-  // 실패했으면 그냥 일반 레이어그룹으로 자연스럽게 대체(기능은 그대로 동작)
   markerLayer = useCluster
     ? L.markerClusterGroup({ disableClusteringAtZoom: 16 })
     : L.layerGroup();
@@ -1115,7 +1003,6 @@ async function startApp() {
     priceContainer.appendChild(btn);
   });
 
-  // 검색창은 타이핑할 때마다 바로 다시 그리면 버벅이니, 0.25초 정도 멈췄을 때만 반영(디바운스)
   let searchDebounceTimer = null;
   document.getElementById("search-input").addEventListener("input", () => {
     clearTimeout(searchDebounceTimer);
@@ -1129,7 +1016,6 @@ async function startApp() {
   document.getElementById("roulette-btn").addEventListener("click", spinRoulette);
   document.getElementById("taste-recommend-btn").addEventListener("click", generateTasteRecommendation);
 
-  // 언어 선택 버튼
   document.querySelectorAll(".lang-btn").forEach((btn) => {
     btn.addEventListener("click", () => setLanguage(btn.dataset.lang));
   });
@@ -1137,19 +1023,15 @@ async function startApp() {
   document.getElementById("course-clear-btn").addEventListener("click", clearCourse);
   document.getElementById("course-recommend-btn").addEventListener("click", generateRecommendedCourse);
 
-  // 모바일 바텀시트 핸들 - 누르면 검색창/리스트를 접고 지도를 크게 봄
   const sidebarHandle = document.getElementById("sidebar-handle");
   const appContainer = document.getElementById("app-container");
   sidebarHandle.addEventListener("click", () => {
     const collapsed = appContainer.classList.toggle("sidebar-collapsed");
     sidebarHandle.setAttribute("aria-expanded", String(!collapsed));
-    // 지도 컨테이너 크기가 CSS로 바뀌었으니, Leaflet한테 다시 계산하라고 알려줘야
-    // 타일이 회색으로 깨지지 않음. 애니메이션(트랜지션) 끝난 뒤 한 번 더 불러줌.
     setTimeout(() => map.invalidateSize(), 50);
     setTimeout(() => map.invalidateSize(), 350);
   });
 
-  // "⚙️ 필터 더보기" 토글 - 가격/비건/매운맛/포토스팟/즐겨찾기 필터를 평소엔 접어둠
   const filterToggleBtn = document.getElementById("filter-toggle-btn");
   const filterMore = document.getElementById("filter-more");
   filterToggleBtn.addEventListener("click", () => {
@@ -1170,8 +1052,7 @@ async function startApp() {
   applyFilters();
 
   const loadingEl = document.getElementById("map-loading");
-  if (loadingEl) loadingEl.remove(); // 지도 준비 끝났으니 로딩 문구 제거
+  if (loadingEl) loadingEl.remove(); 
 }
 
 startApp();
-  
