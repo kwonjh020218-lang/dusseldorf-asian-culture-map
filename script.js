@@ -340,7 +340,13 @@ function buildPopupContent(place) {
   if (place.type === "restaurant") {
     const result = findNearestCafe(place);
     if (result) {
-      recommendationHtml = `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed #ccc;font-size:0.8rem;">☕ 근처 카페·디저트: <strong>${escapeHtml(result.cafe.name)}</strong> (약 ${Math.round(result.distanceKm * 1000)}m)</div>`;
+      // 1) '근처 카페·디저트' 안내문 다국어 변수 설정
+      let recTitle = "☕ 근처 카페·디저트:";
+      let approxText = `약 ${Math.round(result.distanceKm * 1000)}m`;
+      if (currentLang === "en") { recTitle = "☕ Nearby Cafe/Dessert:"; approxText = `approx. ${Math.round(result.distanceKm * 1000)}m`; }
+      if (currentLang === "de") { recTitle = "☕ Café/Dessert in der Nähe:"; approxText = `ca. ${Math.round(result.distanceKm * 1000)}m`; }
+      
+      recommendationHtml = `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed #ccc;font-size:0.8rem;">${recTitle} <strong>${escapeHtml(result.cafe.name)}</strong> (${approxText})</div>`;
     }
   }
 
@@ -350,22 +356,41 @@ function buildPopupContent(place) {
   const isVisited = visitedPlaces.includes(place.id);
   const isInCourse = course.includes(place.id);
   const distanceHtml = renderDistanceFromUser(place) ? `<div style="margin-top:4px;font-size:0.78rem;color:#3c7a5e;font-weight:600;">${renderDistanceFromUser(place)}</div>` : "";
+  
+  // 2) '여기서 경로 보기' 버튼 다국어 번역 설정
+  let routeBtnText = "🚗 여기까지 경로 보기";
+  if (currentLang === "en") routeBtnText = "🚗 Route to here";
+  if (currentLang === "de") routeBtnText = "🚗 Route hierher";
   const routeBtnHtml = (useRouting && userLocation)
-    ? `<button onclick="showRouteTo(${place.id});" style="margin-top:6px;width:100%;padding:5px;border:1px solid #1b2a4a;background:#fff;color:#1b2a4a;border-radius:6px;cursor:pointer;font-size:0.75rem;font-family:inherit;">🚗 여기까지 경로 보기</button>`
+    ? `<button onclick="showRouteTo(${place.id});" style="margin-top:6px;width:100%;padding:5px;border:1px solid #1b2a4a;background:#fff;color:#1b2a4a;border-radius:6px;cursor:pointer;font-size:0.75rem;font-family:inherit;">${routeBtnText}</button>`
     : "";
-  const courseBtnHtml = `<button onclick="toggleCourse(${place.id});" style="margin-top:4px;width:100%;padding:5px;border:1px solid ${isInCourse ? '#c65a3c' : '#d8d0bd'};background:${isInCourse ? '#c65a3c' : '#fff'};color:${isInCourse ? '#fff' : '#666'};border-radius:6px;cursor:pointer;font-size:0.75rem;font-family:inherit;font-weight:600;">${isInCourse ? '✕ 코스에서 빼기' : '🚩 코스에 담기'}</button>`;
 
-  // 구글맵 검색 URL - 좌표+이름으로 정확한 위치를 새 탭에서 열어줌 (API 키 불필요, 무료)
+  // 3) '코스에 담기 / 빼기' 버튼 다국어 번역 설정
+  let courseBtnText = isInCourse ? '✕ 코스에서 빼기' : '🚩 코스에 담기';
+  if (currentLang === "en") courseBtnText = isInCourse ? '✕ Remove from Course' : '🚩 Add to Course';
+  if (currentLang === "de") courseBtnText = isInCourse ? '✕ Aus Route entfernen' : '🚩 In Route hinzufügen';
+  const courseBtnHtml = `<button onclick="toggleCourse(${place.id});" style="margin-top:4px;width:100%;padding:5px;border:1px solid ${isInCourse ? '#c65a3c' : '#d8d0bd'};background:${isInCourse ? '#c65a3c' : '#fff'};color:${isInCourse ? '#fff' : '#666'};border-radius:6px;cursor:pointer;font-size:0.75rem;font-family:inherit;font-weight:600;">${courseBtnText}</button>`;
+
+  // 4) '가봤어요 / 완료' 버튼 다국어 번역 설정
+  let visitBtnText = isVisited ? '✔️ 완료' : '📍 가봤어요';
+  if (currentLang === "en") visitBtnText = isVisited ? '✔️ Visited' : '📍 Been here';
+  if (currentLang === "de") visitBtnText = isVisited ? '✔️ Besucht' : '📍 Hier gewesen';
+
+  // 5) '구글맵 리뷰 보기' 버튼 다국어 번역 설정
+  let gmapsBtnText = "🗺️ 구글맵에서 사진·리뷰 보기";
+  if (currentLang === "en") gmapsBtnText = "🗺️ View Photos & Reviews on Google Maps";
+  if (currentLang === "de") gmapsBtnText = "🗺️ Fotos & Bewertungen auf Google Maps";
+
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name)}@${place.lat},${place.lng}`;
-  const googleMapsBtnHtml = `<a href="${googleMapsUrl}" target="_blank" rel="noopener" style="display:block;margin-top:4px;width:100%;padding:5px;border:1px solid #4285F4;background:#fff;color:#4285F4;border-radius:6px;cursor:pointer;font-size:0.75rem;font-family:inherit;font-weight:600;text-align:center;text-decoration:none;box-sizing:border-box;">🗺️ 구글맵에서 사진·리뷰 보기</a>`;
+  const googleMapsBtnHtml = `<a href="${googleMapsUrl}" target="_blank" rel="noopener" style="display:block;margin-top:4px;width:100%;padding:5px;border:1px solid #4285F4;background:#fff;color:#4285F4;border-radius:6px;cursor:pointer;font-size:0.75rem;font-family:inherit;font-weight:600;text-align:center;text-decoration:none;box-sizing:border-box;">${gmapsBtnText}</a>`;
 
   return `
     <div style="min-width:190px; font-family: inherit;">
       <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
         <strong style="font-size:0.95rem; color:#1b2a4a;">${escapeHtml(place.name)}</strong>
         <span style="white-space:nowrap;">
-          <button class="visit-btn ${isVisited ? 'active' : ''}" onclick="toggleVisited(${place.id});" aria-label="${isVisited ? '방문 완료 취소하기' : '가본 곳으로 표시하기'}" aria-pressed="${isVisited}">${isVisited ? '✔️ 완료' : '📍 가봤어요'}</button>
-          <button class="popup-fav-btn ${activeClass}" onclick="toggleFavorite(${place.id});" aria-label="${isFav ? '즐겨찾기 해제' : '즐겨찾기에 추가'}" aria-pressed="${isFav}">${starText}</button>
+          <button class="visit-btn ${isVisited ? 'active' : ''}" onclick="toggleVisited(${place.id});" aria-label="Visit toggle" aria-pressed="${isVisited}">${visitBtnText}</button>
+          <button class="popup-fav-btn ${activeClass}" onclick="toggleFavorite(${place.id});" aria-label="Favorite toggle" aria-pressed="${isFav}">${starText}</button>
         </span>
       </div>
       <div style="margin-top:2px;">${renderTags(place)}</div>
