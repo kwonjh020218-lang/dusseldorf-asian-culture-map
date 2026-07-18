@@ -113,7 +113,6 @@ let basePlaces = []; // 한국어 원본 데이터 (언어 전환 시 이걸 기
 function normalizePlace(row) {
   const translations = {};
   (row.place_translations || []).forEach((tr) => {
-    // DB에서 가져온 name, note, menu를 소문자로 정확하게 매칭합니다.
     translations[tr.lang] = { name: tr.name, note: tr.note, menu: tr.menu || [] };
   });
 
@@ -130,11 +129,11 @@ function normalizePlace(row) {
     note: row.note,
     priceLevel: row.price_level,
     menu: row.menu || [],
-    _translations: translations, // { en: {name, note, menu}, de: {name, note, menu} }
+    _translations: translations,
   };
 }
+
 async function fetchPlaces() {
-  // 💡 괄호 안에 'name'을 추가하여 데이터베이스에서 번역된 이름 데이터도 함께 긁어오도록 주소를 수정합니다.
   const response = await fetch(
     `${SUPABASE_URL}/rest/v1/places?select=*,place_translations(lang,name,note,menu)&order=id`,
     {
@@ -144,6 +143,15 @@ async function fetchPlaces() {
       },
     }
   );
+
+  if (!response.ok) {
+    throw new Error(`Supabase 응답 오류: ${response.status}`);
+  }
+
+  const rows = await response.json();
+  places = rows.map(normalizePlace);
+  basePlaces = places.map((p) => ({ ...p, _translations: p._translations }));
+}
 
   if (!response.ok) {
     throw new Error(`Supabase 응답 오류: ${response.status}`);
