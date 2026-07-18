@@ -908,21 +908,41 @@ function setLanguage(lang) {
 }
 
 // ==========================================================================
-// 💡 모바일 제스처 스냅 엔진 (2안 대응 안정화 튜닝 버전)
+// 💡 모바일 바텀시트 엔진 (재작성 - 실제 지도 공간 기준으로 정확하게 계산)
 // ==========================================================================
 let tsY = 0;
-let tmY = 0;
 let isDraggingSheet = false;
+let currentSheetState = "collapsed"; // 'collapsed' | 'half' | 'expanded' - 항상 이 값이 기준(source of truth)
+
+// 지도가 실제로 차지하는 공간(#app-container의 진짜 높이) 기준으로 각 상태의
+// translateY 픽셀값을 계산. 화면 전체(vh) 기준으로 계산하면 위에 있는
+// 헤더/언어버튼/상단바 높이만큼 오차가 생겨서 지도가 안 보이거나 시트가
+// 화면 밖으로 넘치는 문제가 있었음 - 그래서 항상 이 함수로만 계산함.
+function getSheetMetrics() {
+  const containerH = document.getElementById("app-container").clientHeight;
+  return {
+    containerH,
+    expandedY: 0,
+    halfY: containerH * 0.45,
+    collapsedY: containerH - 56, // 손잡이만 보이는 높이
+  };
+}
 
 function setMobileSheetState(state) {
   const sidebar = document.getElementById("sidebar");
-  sidebar.classList.remove("sheet-expanded", "sheet-half", "sheet-collapsed");
+  const metrics = getSheetMetrics();
+  currentSheetState = state;
 
-  if (state === 'expanded') sidebar.classList.add("sheet-expanded");
-  else if (state === 'half') sidebar.classList.add("sheet-half");
-  else sidebar.classList.add("sheet-collapsed");
+  const targetY =
+    state === "expanded" ? metrics.expandedY : state === "half" ? metrics.halfY : metrics.collapsedY;
 
-  setTimeout(() => { if(map) map.invalidateSize(); }, 320);
+  sidebar.classList.add("sheet-snapping"); // 손 뗀 뒤엔 부드럽게 애니메이션
+  sidebar.style.height = metrics.containerH + "px";
+  sidebar.style.transform = `translateY(${targetY}px)`;
+
+  setTimeout(() => {
+    if (map) map.invalidateSize();
+  }, 320);
 }
 
 function initMobileSwipeEngine() {
@@ -930,59 +950,63 @@ function initMobileSwipeEngine() {
   const sidebar = document.getElementById("sidebar");
   if (!handle || !sidebar) return;
 
-  handle.addEventListener("touchstart", (e) => {
-    tsY = e.touches[0].clientY;
-    isDraggingSheet = true;
-    sidebar.style.transition = "none";
-  }, { passive: true });
+  handle.addEventListener(
+    "touchstart",
+    (e) => {
+      tsY = e.touches[0].clientY;
+      isDraggingSheet = true;
+      sidebar.classList.remove("sheet-snapping"); // 드래그 중엔 애니메이션 꺼서 손가락을 그대로 따라오게 함
+    },
+    { passive: true }
+  );
 
-  handle.addEventListener("touchmove", (e) => {
-    if (!isDraggingSheet) return;
-    tmY = e.touches[0].clientY;
-    let deltaY = tmY - tsY;
+  handle.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!isDraggingSheet) return;
+      const metrics = getSheetMetrics();
+      const deltaY = e.touches[0].clientY - tsY;
 
-    // 💡 아래 baseTranslate 값은 CSS의 .sheet-collapsed 규칙(translateY(100vh - 60px))과
-    // 반드시 똑같아야 함. 예전엔 여기가 0.8*innerHeight - 44 였는데 CSS 값이랑 안 맞아서,
-    // 손을 뗄 때 시트가 순간이동하듯 뚝 끊기는 버벅임이 있었음.
-    let baseTranslate = window.innerHeight - 60;
-    let currentTranslate = baseTranslate + deltaY;
+      const startY =
+        currentSheetState === "expanded"
+          ? metrics.expandedY
+          : currentSheetState === "half"
+          ? metrics.halfY
+          : metrics.collapsedY;
 
-    if (sidebar.classList.contains("sheet-expanded")) currentTranslate = 0 + deltaY;
-    if (sidebar.classList.contains("sheet-half")) currentTranslate = (window.innerHeight * 0.4) + deltaY;
+      let nextY = startY + deltaY;
+      nextY = Math.max(metrics.expandedY, Math.min(metrics.collapsedY, nextY)); // 범위 밖으로 못 나가게 제한
 
-    if (currentTranslate >= 0 && currentTranslate <= baseTranslate) {
-      sidebar.style.transform = `translateY(${currentTranslate}px)`;
-    }
-  }, { passive: true });
+      sidebar.style.transform = `translateY(${nextY}px)`;
+    },
+    { passive: true }
+  );
 
   handle.addEventListener("touchend", (e) => {
     if (!isDraggingSheet) return;
     isDraggingSheet = false;
-    sidebar.style.transition = "transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)";
 
-    let currentY = e.changedTouches[0].clientY;
-    let deltaY = currentY - tsY;
+    const deltaY = e.changedTouches[0].clientY - tsY;
 
     if (Math.abs(deltaY) > 40) {
       if (deltaY < 0) {
-        if (sidebar.classList.contains("sheet-collapsed")) setMobileSheetState('half');
-        else setMobileSheetState('expanded');
+        setMobileSheetState(currentSheetState === "collapsed" ? "half" : "expanded");
       } else {
-        if (sidebar.classList.contains("sheet-expanded")) setMobileSheetState('half');
-        else setMobileSheetState('collapsed');
+        setMobileSheetState(currentSheetState === "expanded" ? "half" : "collapsed");
       }
     } else {
-      if (sidebar.classList.contains("sheet-expanded")) setMobileSheetState('expanded');
-      else if (sidebar.classList.contains("sheet-half")) setMobileSheetState('half');
-      else setMobileSheetState('collapsed');
+      setMobileSheetState(currentSheetState); // 살짝만 움직였으면 원래 위치로 스냅
     }
   });
 
   handle.addEventListener("click", () => {
-    if (sidebar.classList.contains("sheet-collapsed")) setMobileSheetState('half');
-    else if (sidebar.classList.contains("sheet-half")) setMobileSheetState('expanded');
-    else setMobileSheetState('collapsed');
+    if (currentSheetState === "collapsed") setMobileSheetState("half");
+    else if (currentSheetState === "half") setMobileSheetState("expanded");
+    else setMobileSheetState("collapsed");
   });
+
+  // 화면 회전 등으로 크기가 바뀌면 현재 상태 기준으로 다시 계산
+  window.addEventListener("resize", () => setMobileSheetState(currentSheetState));
 }
 
 async function startApp() {
