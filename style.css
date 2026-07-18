@@ -30,6 +30,31 @@ body {
   margin-top: 0.2rem;
 }
 
+#lang-switcher {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.4rem 1rem;
+  background: #12203d;
+}
+.lang-btn {
+  border: 1px solid #3a4a6b;
+  background: transparent;
+  color: #cfd6e4;
+  font-size: 0.7rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.lang-btn:hover {
+  border-color: #c65a3c;
+}
+.lang-btn.active {
+  background: #c65a3c;
+  color: #fff;
+  border-color: #c65a3c;
+}
+
 /* ===== 상단 스트립: 레벨뱃지 + 룰렛을 한 줄로 압축 ===== */
 #top-strip {
   display: flex;
@@ -223,15 +248,20 @@ body {
 }
 
 .place-item {
-  padding: 0.9rem 1.2rem;
-  border-bottom: 1px solid #eee5d8;
+  margin: 0.4rem 0.6rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid #eee5d8;
+  border-radius: 10px;
+  background: #fff;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
   position: relative;
 }
 
 .place-item:hover {
-  background: #f0e9dc;
+  background: #fdf9f2;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
 }
 
 .place-item.highlight-flash {
@@ -649,7 +679,22 @@ body {
     height: 52vh;
   }
 
-  /* 카테고리/가격 버튼: 폰 화면에 맞게 살짝 작게, 터치하기엔 충분한 크기 유지 */
+  /* 카테고리/가격 버튼: 폰에서는 줄바꿈해서 여러 줄 차지하는 대신
+     한 줄로 만들고 옆으로 스크롤하게 해서, 실제 장소 리스트 볼 공간을 확보함 */
+  #category-buttons {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.3rem;
+    scrollbar-width: none; /* Firefox: 스크롤바 숨김 (기능은 그대로 스크롤 가능) */
+  }
+  #category-buttons::-webkit-scrollbar {
+    display: none; /* Chrome/Safari: 스크롤바 숨김 */
+  }
+  #category-buttons .cat-btn {
+    flex-shrink: 0; /* 버튼이 눌리지 않고 원래 크기 유지, 넘치면 옆으로 스크롤 */
+  }
+
   .cat-btn {
     font-size: 0.74rem;
     padding: 0.4rem 0.65rem;

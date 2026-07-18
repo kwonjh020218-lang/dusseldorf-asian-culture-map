@@ -19,17 +19,48 @@
 - ⭐ **개인화**: 즐겨찾기, 방문 체크, 방문 수에 따른 레벨 뱃지 (localStorage 저장)
 - 🗺️ **지도 UX**: 마커 클러스터링, 호버 툴팁, 클릭 시 마커 강조 애니메이션
 - 🎲 **오늘 뭐 하지?**: 현재 필터 기준으로 랜덤 추천해주는 룰렛
+- 🌐 **다국어(i18n)**: 한국어/English/Deutsch 지원. UI 텍스트뿐 아니라 122곳의 설명·대표메뉴까지 전체 번역됨 (터키어·아랍어는 추후 추가 예정 - 아랍어는 텍스트 방향이 반대(RTL)라 레이아웃 작업이 추가로 필요함)
 
 ## 기술 스택
 
-- **순수 HTML/CSS/JavaScript** — 프레임워크·번들러 없이 바닐라 JS로 구현
+- **순수 HTML/CSS/JavaScript (프론트엔드)** — 프레임워크·번들러 없이 바닐라 JS로 구현
+- **[Supabase](https://supabase.com/) (백엔드/DB)** — PostgreSQL 데이터베이스에 122곳 데이터를 저장하고, REST API로 fetch해서 가져오는 구조. 원래는 코드 안에 데이터가 직접 박혀있었는데, 코드와 데이터를 분리하고 실제 DB 연동 구조로 리팩토링함
+- **자체 제작 i18n(다국어) 레이어** — UI 문구·카테고리명은 `i18n.js`에 정적으로 두고, **장소별 설명/대표메뉴 번역은 `place_translations` 테이블에 별도로 저장**해서 `places` 테이블과 외래키(FK)로 연결. Supabase가 관계를 자동으로 인식해서, 장소 데이터를 요청할 때 번역까지 한 번에 묶어서(nested) 내려줌 (`places?select=*,place_translations(*)`)
 - **[Leaflet.js](https://leafletjs.com/)** — 지도 렌더링
 - **[Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster)** — 마커 클러스터링
 - **[Leaflet Routing Machine](http://www.liedman.net/leaflet-routing-machine/)** + OSRM — 경로 안내
-- **Google Places API** (개발 단계에서만) — 실제 장소 데이터(좌표, 카테고리) 수집에 활용, 배포된 앱 자체는 API 키를 쓰지 않음
-- **GitHub Pages** — 무료 정적 호스팅
+- **Google Places API** (초기 데이터 수집 단계에서만) — 실제 장소 데이터(좌표, 카테고리) 수집에 활용
+- **GitHub Pages** — 무료 정적 호스팅 (프론트엔드), Supabase가 백엔드 역할
 
 CDN 라이브러리는 unpkg → jsdelivr → cdnjs 순서로 자동 재시도하도록 만들어서, 특정 CDN이 네트워크 환경에 따라 차단되어도 앱이 죽지 않도록 방어적으로 설계했습니다.
+
+### 왜 Leaflet을 선택했나
+
+오픈소스 지도 라이브러리로는 대표적으로 **Leaflet, OpenLayers, MapLibre GL JS** 세 가지가 있습니다.
+
+- **OpenLayers**: GIS 기능이 가장 풍부하고 강력하지만, 그만큼 학습 곡선이 가파르고 무거움
+- **MapLibre GL JS**: WebGL 기반 벡터 타일 렌더링으로 부드러운 확대/축소, 3D, 커스텀 스타일링에 강함. Mapbox GL JS의 오픈소스 포크로, 최근 빠르게 채택되고 있음
+- **Leaflet**: 가볍고 배우기 쉬우며, 마커·팝업 등 기본 상호작용에 최적화됨
+
+이 프로젝트는 122개 지점에 마커를 찍고 팝업·클러스터링·간단한 경로 안내를 붙이는 정도의 요구사항이라, **Leaflet의 단순함이 오히려 적합**하다고 판단했습니다. 대용량 벡터 타일 렌더링이나 3D 시각화가 필요한 프로젝트라면 MapLibre GL JS를, 복잡한 공간 분석(버퍼, 위상 연산 등)이 필요하다면 OpenLayers를 선택했을 것입니다.
+
+같은 맥락으로, deck.gl·GeoArrow·GeoParquet 같은 도구들은 수백만 건 이상의 대용량 지리공간 데이터를 GPU 기반으로 시각화할 때 강점이 있는 최신 스택입니다. 이번 프로젝트는 122개 지점 규모라 GeoJSON+Leaflet 조합으로 충분하다고 판단해 도입하지 않았지만, 데이터 규모가 커진다면 우선적으로 검토할 기술들입니다. COG(래스터), FlatGeobuf/GeoParquet/PMTiles(벡터), Zarr(다차원 배열) 같은 클라우드 네이티브 지리공간 포맷도 알고 있으나, 122개 규모의 포인트 데이터에는 해당 포맷들의 이점(대용량 스트리밍, 부분 로딩)이 발휘되지 않아 도입하지 않았습니다.
+
+## 데이터베이스 구조
+
+테이블 2개로 구성된 정규화된 구조입니다.
+
+```
+places (기준 데이터, 한국어 원본)
+  id, name, category, type, lat, lng,
+  has_vegan, has_spicy, has_photo_spot, note, price_level, menu
+
+place_translations (번역 데이터, 언어별)
+  place_id (FK → places.id), lang, note, menu
+  PRIMARY KEY (place_id, lang)
+```
+
+`place_id + lang`을 복합 기본키로 잡아서, 장소 하나당 언어별로 한 행씩만 존재하도록 제약했습니다. 새 언어를 추가할 땐 `place_translations`에 행만 추가하면 되고, `places` 테이블 구조는 안 건드려도 됩니다.
 
 ## 로컬에서 실행하기
 
