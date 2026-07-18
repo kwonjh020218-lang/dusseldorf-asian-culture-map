@@ -1,4 +1,4 @@
-// ===== XSS 방지: 사용자/외부 데이터를 HTML에 꽂아넣기 전에 이스케이프 =====
+// ===== XSS Prevention Edge Layer =====
 function escapeHtml(str) {
   if (str === null || str === undefined) return "";
   return String(str)
@@ -83,6 +83,7 @@ async function loadAllLibraries() {
   return true;
 }
 
+// ===== Supabase Infrastructure Configuration =====
 const SUPABASE_URL = "https://txqazmmndbpcbokpipbp.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_0xcR1WbZcpIg271GEsnBYw_WWPK1uu7";
 
@@ -92,7 +93,7 @@ let basePlaces = [];
 function normalizePlace(row) {
   const translations = {};
   (row.place_translations || []).forEach((tr) => {
-    translations[tr.lang] = { name: tr.name, note: tr.note, menu: tr.menu || [] };
+    translations[tr.lang] = { note: tr.note, menu: tr.menu || [] };
   });
 
   return {
@@ -113,8 +114,9 @@ function normalizePlace(row) {
 }
 
 async function fetchPlaces() {
+  // 💡 400 에러를 방지하기 위해 검증된 원본 쿼리 구조(lang,note,menu)로 호출
   const response = await fetch(
-    `${SUPABASE_URL}/rest/v1/places?select=*,place_translations(lang,name,note,menu)&order=id`,
+    `${SUPABASE_URL}/rest/v1/places?select=*,place_translations(lang,note,menu)&order=id`,
     {
       headers: {
         apikey: SUPABASE_ANON_KEY,
@@ -137,7 +139,6 @@ function safeStorageGet(key, defaultValue) {
     const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : defaultValue;
   } catch (e) {
-    console.warn(`localStorage 읽기 실패(${key}), 기본값 사용:`, e.message);
     return defaultValue;
   }
 }
@@ -145,11 +146,10 @@ function safeStorageGet(key, defaultValue) {
 function safeStorageSet(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
-  } catch (e) {
-    console.warn(`localStorage 저장 실패(${key}) - 이번 세션에서만 유지돼요:`, e.message);
-  }
+  } catch (e) {}
 }
 
+// ===== Global Application State =====
 let favorites = safeStorageGet("favorites", []); 
 let visitedPlaces = safeStorageGet("visitedPlaces", []); 
 let currentCategory = "전체"; 
