@@ -224,6 +224,7 @@ function applyPlaceTranslations(lang) {
   places = basePlaces.map((p) => {
     const tr = p._translations && p._translations[lang];
     if (!tr) return { ...p };
-    return { ...p, note: tr.note, menu: tr.menu };
+    // tr.name이 존재하면 번역된 이름으로 덮어쓰고, 없으면 원본 한국어 이름을 유지합니다.
+    return { ...p, name: tr.name || p.name, note: tr.note, menu: tr.menu };
   });
 }
