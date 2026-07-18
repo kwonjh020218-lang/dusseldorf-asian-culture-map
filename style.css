@@ -1,4 +1,3 @@
-
 * {
   margin: 0;
   padding: 0;
@@ -30,36 +29,34 @@ body {
   margin-top: 0.2rem;
 }
 
+/* 국기 스위처 고도화 스타일 */
 #lang-switcher {
   display: flex;
-  gap: 0.4rem;
-  padding: 0.4rem 1rem;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
   background: #12203d;
 }
 .lang-btn {
   border: 1px solid #3a4a6b;
   background: transparent;
-  font-size: 1.2rem; /* 국기 이모지가 시원하게 보이도록 크기 확대 */
-  padding: 0.2rem 0.5rem;
-  border-radius: 8px; /* 국기 모양과 어울리는 부드러운 사각형 */
+  font-size: 1.2rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 8px;
   cursor: pointer;
   font-family: inherit;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .lang-btn:hover {
   border-color: #c65a3c;
   background: rgba(198, 90, 60, 0.1);
 }
-
 .lang-btn.active {
   background: #c65a3c;
   border-color: #c65a3c;
-  transform: scale(1.05); /* 선택된 국기 버튼만 살짝 키우기 */
-  box-shadow: 0 0 8px rgba(198, 90, 60, 0.5); /* 은은한 불빛 효과 */
+  transform: scale(1.05);
+  box-shadow: 0 0 8px rgba(198, 90, 60, 0.6);
 }
 
-/* ===== 상단 스트립: 레벨뱃지 + 룰렛을 한 줄로 압축 ===== */
 #top-strip {
   display: flex;
   align-items: center;
@@ -70,9 +67,6 @@ body {
   border-bottom: 2px solid #c65a3c;
 }
 #top-strip #level-badge {
-  padding: 0;
-  background: none;
-  border-bottom: none;
   color: #ffd8a8;
   font-size: 0.78rem;
   font-weight: 700;
@@ -146,7 +140,6 @@ body {
   background: #fff;
   color: #1b2a4a;
 }
-
 #search-input:focus {
   outline: none;
   border-color: #c65a3c;
@@ -182,11 +175,7 @@ body {
   transition: all 0.15s ease;
   font-family: inherit;
 }
-
-.cat-btn:hover {
-  background: #f0e9dc;
-}
-
+.cat-btn:hover { background: #f0e9dc; }
 .cat-btn.active {
   background: #1b2a4a;
   color: #fff;
@@ -212,11 +201,7 @@ body {
   transition: all 0.15s ease;
   text-align: center;
 }
-
-#locate-btn:hover {
-  background: #f0f5f0;
-}
-
+#locate-btn:hover { background: #f0f5f0; }
 #locate-btn.active {
   background: #3c7a5e;
   color: #fff;
@@ -242,9 +227,7 @@ body {
   gap: 0.5rem;
   padding-bottom: 0.3rem;
 }
-#filter-more.expanded {
-  display: flex;
-}
+#filter-more.expanded { display: flex; }
 
 #place-list {
   list-style: none;
@@ -261,13 +244,11 @@ body {
   transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
   position: relative;
 }
-
 .place-item:hover {
   background: #fdf9f2;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   transform: translateY(-1px);
 }
-
 .place-item.highlight-flash {
   animation: flash-animation 1.5s ease-in-out 2;
 }
@@ -284,63 +265,38 @@ body {
   align-items: flex-start;
   gap: 0.5rem;
 }
-
 .place-name {
   font-weight: 600;
   color: #1b2a4a;
   flex: 1;
 }
-
 .place-category {
   font-size: 0.75rem;
   color: #c65a3c;
   margin-top: 0.2rem;
 }
 
-.fav-btn {
+.fav-btn, .course-badge-btn {
   background: none;
   border: none;
-  font-size: 1.2rem;
   cursor: pointer;
   padding: 2px;
   line-height: 1;
-  color: #ccc;
-  transition: transform 0.15s ease, color 0.15s ease;
+  transition: transform 0.15s ease;
 }
+.fav-btn { font-size: 1.2rem; color: #ccc; }
+.fav-btn:hover { transform: scale(1.2); }
+.fav-btn.active { color: #ffcc00; }
 
-.fav-btn:hover {
-  transform: scale(1.2);
-}
-
-.fav-btn.active {
-  color: #ffcc00;
-}
-
-.course-badge-btn {
-  background: none;
-  border: none;
-  font-size: 0.95rem;
-  cursor: pointer;
-  padding: 2px;
-  line-height: 1;
-  opacity: 0.55;
-  transition: transform 0.15s ease, opacity 0.15s ease;
-}
-.course-badge-btn:hover {
-  transform: scale(1.2);
-  opacity: 0.85;
-}
-.course-badge-btn.active {
-  opacity: 1;
-}
+.course-badge-btn { font-size: 0.95rem; opacity: 0.55; }
+.course-badge-btn:hover { transform: scale(1.2); opacity: 0.85; }
+.course-badge-btn.active { opacity: 1; }
 
 #map {
   flex: 1;
   height: 100%;
   position: relative;
-  transition: height 0.3s ease;
 }
-
 #map-loading {
   position: absolute;
   inset: 0;
@@ -350,7 +306,7 @@ body {
   color: #999;
   font-size: 0.9rem;
   background: #f4efe6;
-  z-index: 400; /* Leaflet 기본 레이어(z-index 200대)보다 위에 오도록 */
+  z-index: 400;
 }
 
 .user-location-tri {
@@ -372,17 +328,9 @@ body {
   vertical-align: middle;
   line-height: 1;
 }
-.popup-fav-btn.active {
-  color: #ffcc00;
-}
+.popup-fav-btn.active { color: #ffcc00; }
 
-/* ===== 룰렛 / 경로 버튼 ===== */
-#location-row #clear-route-btn {
-  width: auto;
-  flex: 1;
-  font-size: 0.72rem;
-  padding: 0.5rem 0.5rem;
-}
+#location-row #clear-route-btn { flex: 1; font-size: 0.72rem; padding: 0.5rem 0.5rem; }
 #clear-route-btn {
   width: 100%;
   border: 1px solid #d8d0bd;
@@ -392,13 +340,11 @@ body {
   font-family: inherit;
   font-weight: 600;
   font-size: 0.82rem;
-  transition: transform 0.1s ease;
   background: #fff;
   color: #666;
 }
 #clear-route-btn:hover { background: #f0e9dc; }
 
-/* ===== 방문 체크 버튼 ===== */
 .visit-btn {
   background: none;
   border: 1px solid #d8d0bd;
@@ -415,7 +361,6 @@ body {
   border-color: #3c7a5e;
 }
 
-/* ===== 룰렛 결과 모달 ===== */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -433,22 +378,9 @@ body {
   max-width: 280px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
-.modal-emoji {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-}
-.modal-subtitle {
-  font-size: 0.8rem;
-  color: #888;
-  margin-bottom: 0.4rem;
-}
-.modal-place-name {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #1b2a4a;
-  margin-bottom: 1.2rem;
-  line-height: 1.4;
-}
+.modal-emoji { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.modal-subtitle { font-size: 0.8rem; color: #888; margin-bottom: 0.4rem; }
+.modal-place-name { font-size: 1.15rem; font-weight: 700; color: #1b2a4a; margin-bottom: 1.2rem; line-height: 1.4; }
 .modal-close-btn {
   background: #c65a3c;
   color: #fff;
@@ -460,12 +392,7 @@ body {
   font-family: inherit;
 }
 
-/* ===== 나만의 코스 패널 ===== */
-#course-panel {
-  border-bottom: 1px solid #e0dccf;
-  padding: 0.8rem 1rem;
-  background: #fdf6ec;
-}
+#course-panel { border-bottom: 1px solid #e0dccf; padding: 0.8rem 1rem; background: #fdf6ec; }
 #course-header {
   font-size: 0.82rem;
   font-weight: 700;
@@ -476,271 +403,40 @@ body {
   cursor: pointer;
   user-select: none;
 }
-#course-toggle-arrow {
-  color: #999;
-  font-size: 0.7rem;
-}
-#course-body {
-  display: none;
-  margin-top: 0.5rem;
-}
-#course-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-.course-item {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: #fff;
-  border: 1px solid #e8dfc8;
-  border-radius: 8px;
-  padding: 0.35rem 0.5rem;
-  font-size: 0.78rem;
-}
-.course-item .course-num {
-  background: #c65a3c;
-  color: #fff;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.68rem;
-  flex-shrink: 0;
-}
-.course-item .course-name {
-  flex: 1;
-  color: #1b2a4a;
-  font-weight: 600;
-}
-.course-item button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 0.75rem;
-  color: #888;
-  padding: 1px 3px;
-}
-#course-actions {
-  display: flex;
-  gap: 0.4rem;
-  margin-top: 0.5rem;
-}
-#course-actions button {
-  flex: 1;
-  border: none;
-  border-radius: 6px;
-  padding: 0.4rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
-}
+#course-toggle-arrow { color: #999; font-size: 0.7rem; }
+#course-body { display: none; margin-top: 0.5rem; }
+#course-list { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
+.course-item { display: flex; align-items: center; gap: 0.4rem; background: #fff; border: 1px solid #e8dfc8; border-radius: 8px; padding: 0.35rem 0.5rem; font-size: 0.78rem; }
+.course-item .course-num { background: #c65a3c; color: #fff; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; flex-shrink: 0; }
+.course-item .course-name { flex: 1; color: #1b2a4a; font-weight: 600; }
+.course-item button { background: none; border: none; cursor: pointer; font-size: 0.75rem; color: #888; padding: 1px 3px; }
+#course-actions { display: flex; gap: 0.4rem; margin-top: 0.5rem; }
+#course-actions button { flex: 1; border: none; border-radius: 6px; padding: 0.4rem; font-size: 0.75rem; font-weight: 700; cursor: pointer; font-family: inherit; }
 #course-clear-btn { background: #fff; color: #888; border: 1px solid #d8d0bd !important; }
-
-#course-empty {
-  font-size: 0.75rem;
-  color: #999;
-  line-height: 1.4;
-  padding: 0.3rem 0;
-}
-#course-start-info {
-  font-size: 0.72rem;
-  color: #3c7a5e;
-  font-weight: 600;
-  margin-top: 0.4rem;
-}
-#course-recommend-btn {
-  width: 100%;
-  margin-top: 0.5rem;
-  border: none;
-  border-radius: 6px;
-  padding: 0.5rem;
-  font-size: 0.78rem;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
-  background: #7b3fbf;
-  color: #fff;
-}
+#course-empty { font-size: 0.75rem; color: #999; line-height: 1.4; padding: 0.3rem 0; }
+#course-start-info { font-size: 0.72rem; color: #3c7a5e; font-weight: 600; margin-top: 0.4rem; }
+#course-recommend-btn { width: 100%; margin-top: 0.5rem; border: none; border-radius: 6px; padding: 0.5rem; font-size: 0.78rem; font-weight: 700; cursor: pointer; font-family: inherit; background: #7b3fbf; color: #fff; }
 #course-recommend-btn:hover { opacity: 0.9; }
 
-/* ===== 장소 마커 (L.marker + divIcon 방식 - 클러스터링과 궁합이 좋아 클릭/호버가 안정적임) ===== */
-.place-marker-icon {
-  background: transparent !important;
-  border: none !important;
-}
-.place-marker-dot {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-}
-.place-marker-dot.marker-pulse {
-  transform: scale(1.8);
-  border-color: #ffcc00;
-  border-width: 3px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.5);
-}
+.place-marker-icon { background: transparent !important; border: none !important; }
+.place-marker-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.4); transition: transform 0.2s ease, border-color 0.2s ease; }
+.place-marker-dot.marker-pulse { transform: scale(1.8); border-color: #ffcc00; border-width: 3px; box-shadow: 0 3px 10px rgba(0,0,0,0.5); }
+.place-tooltip { font-family: inherit; font-size: 12px; color: #1b2a4a; background: #fff; border: 1px solid #d8d0bd; border-radius: 6px; padding: 4px 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+.leaflet-routing-container { display: none !important; }
+#sidebar-handle { display: none; }
 
-/* ===== 마커 호버 툴팁 ===== */
-.place-tooltip {
-  font-family: "Pretendard", "Noto Sans KR", -apple-system, sans-serif;
-  font-size: 12px;
-  color: #1b2a4a;
-  background: #fff;
-  border: 1px solid #d8d0bd;
-  border-radius: 6px;
-  padding: 4px 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-}
-
-/* ===== 라우팅 패널(턴바이턴) 숨김 - 지도가 지저분해지지 않도록 ===== */
-.leaflet-routing-container {
-  display: none !important;
-}
-
-/* ===== 바텀시트 핸들 (데스크톱에선 안 보임) ===== */
-#sidebar-handle {
-  display: none;
-}
-
-/* ===== 모바일 반응형 ===== */
 @media (max-width: 768px) {
-  #sidebar-handle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    border: none;
-    background: #faf7f2;
-    padding: 0.5rem 0;
-    cursor: pointer;
-    border-bottom: 1px solid #e0dccf;
-    flex-shrink: 0;
-  }
-  #sidebar-handle .handle-bar {
-    width: 40px;
-    height: 4px;
-    border-radius: 999px;
-    background: #d8d0bd;
-  }
-  #sidebar-handle:hover .handle-bar {
-    background: #c65a3c;
-  }
-
-  /* 접힌 상태: 손잡이만 남기고 검색창/필터/리스트는 숨김, 지도가 그만큼 커짐 */
-  #app-container.sidebar-collapsed #sidebar {
-    height: auto;
-    overflow: hidden;
-  }
-  #app-container.sidebar-collapsed #filter-panel,
-  #app-container.sidebar-collapsed #course-panel,
-  #app-container.sidebar-collapsed #place-list {
-    display: none;
-  }
-  #app-container.sidebar-collapsed #map {
-    height: calc(100vh - 200px); /* 헤더+상단스트립+핸들 높이만큼 뺀 나머지 전부 */
-  }
-
-  #app-header {
-    padding: 0.7rem 1rem;
-  }
-  #app-header h1 {
-    font-size: 1.05rem;
-  }
-  .subtitle {
-    font-size: 0.75rem;
-  }
-
-  #top-strip {
-    padding: 0.4rem 0.7rem;
-  }
-  #top-strip #level-badge {
-    font-size: 0.7rem;
-  }
-  #top-strip #roulette-btn {
-    font-size: 0.68rem;
-    padding: 0.35rem 0.6rem;
-  }
-
-  #app-container {
-    flex-direction: column-reverse;
-  }
-  #sidebar {
-    width: 100%;
-    height: 48vh;
-    border-right: none;
-    border-top: 2px solid #e0dccf;
-  }
-  #map {
-    height: 52vh;
-  }
-
-  /* 카테고리/가격 버튼: 폰에서는 줄바꿈해서 여러 줄 차지하는 대신
-     한 줄로 만들고 옆으로 스크롤하게 해서, 실제 장소 리스트 볼 공간을 확보함 */
-  #category-buttons {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 0.3rem;
-    scrollbar-width: none; /* Firefox: 스크롤바 숨김 (기능은 그대로 스크롤 가능) */
-  }
-  #category-buttons::-webkit-scrollbar {
-    display: none; /* Chrome/Safari: 스크롤바 숨김 */
-  }
-  #category-buttons .cat-btn {
-    flex-shrink: 0; /* 버튼이 눌리지 않고 원래 크기 유지, 넘치면 옆으로 스크롤 */
-  }
-
-  .cat-btn {
-    font-size: 0.74rem;
-    padding: 0.4rem 0.65rem;
-  }
-
-  /* 아이콘 버튼(★ ✔️ 🚩)들은 손가락으로 누르기엔 작으니 터치 영역을 넓혀줌 */
-  .fav-btn,
-  .visit-btn,
-  .course-badge-btn,
-  .popup-fav-btn {
-    min-width: 32px;
-    min-height: 32px;
-  }
-
-  /* 내 위치 / 경로지우기 버튼이 좁은 화면에서도 텍스트가 안 잘리도록 */
-  #location-row {
-    flex-wrap: wrap;
-  }
-  #locate-btn,
-  #location-row #clear-route-btn {
-    min-width: 120px;
-  }
-
-  /* 지도 팝업이 화면 밖으로 넘치지 않도록 최대 너비 제한 */
-  .leaflet-popup-content-wrapper {
-    max-width: 78vw;
-  }
-  .leaflet-popup-content {
-    margin: 10px 12px;
-  }
-}
-
-/* 아주 좁은 화면(구형 폰 등) 대응 */
-@media (max-width: 380px) {
-  #location-row {
-    flex-direction: column;
-  }
-  #location-row #clear-route-btn {
-    width: auto;
-  }
-  .modal-box {
-    max-width: 240px;
-    padding: 1.5rem 1.2rem;
-  }
+  #sidebar-handle { display: flex; align-items: center; justify-content: center; width: 100%; border: none; background: #faf7f2; padding: 0.5rem 0; border-bottom: 1px solid #e0dccf; }
+  #sidebar-handle .handle-bar { width: 40px; height: 4px; border-radius: 999px; background: #d8d0bd; }
+  #app-container.sidebar-collapsed #filter-panel, #app-container.sidebar-collapsed #course-panel, #app-container.sidebar-collapsed #place-list { display: none; }
+  #app-container.sidebar-collapsed #map { height: calc(100vh - 200px); }
+  #app-container { flex-direction: column-reverse; }
+  #sidebar { width: 100%; height: 48vh; border-top: 2px solid #e0dccf; }
+  #map { height: 52vh; }
+  #category-buttons { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 0.3rem; }
+  #category-buttons .cat-btn { flex-shrink: 0; }
+  .fav-btn, .visit-btn, .course-badge-btn, .popup-fav-btn { min-width: 32px; min-height: 32px; }
+  #location-row { flex-wrap: wrap; }
+  #locate-btn, #location-row #clear-route-btn { min-width: 120px; }
+  .leaflet-popup-content-wrapper { max-width: 78vw; }
 }
