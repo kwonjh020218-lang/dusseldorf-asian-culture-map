@@ -39,7 +39,7 @@ body {
 .lang-btn {
   border: 1px solid #3a4a6b;
   background: transparent;
-  font-size: 1.2rem; /* 국기가 시원하게 보이도록 크기 확대 */
+  font-size: 1.2rem; /* 국기 이모지가 시원하게 보이도록 크기 확대 */
   padding: 0.2rem 0.5rem;
   border-radius: 8px; /* 국기 모양과 어울리는 부드러운 사각형 */
   cursor: pointer;
@@ -55,7 +55,7 @@ body {
 .lang-btn.active {
   background: #c65a3c;
   border-color: #c65a3c;
-  transform: scale(1.05); /* 선택된 국기 살짝 키우기 */
+  transform: scale(1.05); /* 선택된 국기 버튼만 살짝 키우기 */
   box-shadow: 0 0 8px rgba(198, 90, 60, 0.5); /* 은은한 불빛 효과 */
 }
 
