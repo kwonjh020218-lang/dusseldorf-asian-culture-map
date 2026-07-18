@@ -85,8 +85,8 @@ async function loadAllLibraries() {
 const SUPABASE_URL = "https://txqazmmndbpcbokpipbp.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_0xcR1WbZcpIg271GEsnBYw_WWPK1uu7";
 
-let places = []; 
-let basePlaces = []; 
+let places = [];
+let basePlaces = [];
 
 function normalizePlace(row) {
   const translations = {};
@@ -107,7 +107,7 @@ function normalizePlace(row) {
     note: row.note,
     priceLevel: row.price_level,
     menu: row.menu || [],
-    _translations: translations, 
+    _translations: translations,
   };
 }
 
@@ -128,7 +128,7 @@ async function fetchPlaces() {
 
   const rows = await response.json();
   places = rows.map(normalizePlace);
-  basePlaces = places.map((p) => ({ ...p, _translations: p._translations })); 
+  basePlaces = places.map((p) => ({ ...p, _translations: p._translations }));
 }
 
 function safeStorageGet(key, defaultValue) {
@@ -146,22 +146,22 @@ function safeStorageSet(key, value) {
   } catch (e) {}
 }
 
-let favorites = safeStorageGet("favorites", []); 
-let visitedPlaces = safeStorageGet("visitedPlaces", []); 
-let currentCategory = "전체"; 
-let currentPrice = "전체"; 
-let userLocation = null; 
-let isRealGpsLocation = false; 
-let markerMap = {}; 
-let userMarker = null; 
-let markerLayer = null; 
-let routingControl = null; 
-let course = safeStorageGet("course", []); 
-let map = null; 
-let useCluster = false; 
-let useRouting = false; 
-let courseExpanded = false; 
-let recommendCourseClickCount = 0; 
+let favorites = safeStorageGet("favorites", []);
+let visitedPlaces = safeStorageGet("visitedPlaces", []);
+let currentCategory = "전체";
+let currentPrice = "전체";
+let userLocation = null;
+let isRealGpsLocation = false;
+let markerMap = {};
+let userMarker = null;
+let markerLayer = null;
+let routingControl = null;
+let course = safeStorageGet("course", []);
+let map = null;
+let useCluster = false;
+let useRouting = false;
+let courseExpanded = false;
+let recommendCourseClickCount = 0;
 
 function saveCourse() {
   safeStorageSet("course", course);
@@ -241,7 +241,7 @@ function renderDistanceFromUser(place) {
   if (!userLocation) return "";
   const km = getDistanceKm(userLocation.lat, userLocation.lng, place.lat, place.lng);
   const label = isRealGpsLocation ? t("courseStartReal").replace("🎯 출발점: ", "") : t("courseStartFallback").replace("🎯 출발점: ", "");
-  
+
   if (currentLang === "ko") {
     return km < 1 ? `🎯 ${label}에서 약 ${Math.round(km * 1000)}m` : `🎯 ${label}에서 약 ${km.toFixed(1)}km`;
   } else if (currentLang === "de") {
@@ -298,7 +298,7 @@ function buildPopupContent(place) {
       let approxText = `약 ${Math.round(result.distanceKm * 1000)}m`;
       if (currentLang === "en") { recTitle = "☕ Nearby Cafe/Dessert:"; approxText = `approx. ${Math.round(result.distanceKm * 1000)}m`; }
       if (currentLang === "de") { recTitle = "☕ Café/Dessert in der Nähe:"; approxText = `ca. ${Math.round(result.distanceKm * 1000)}m`; }
-      
+
       recommendationHtml = `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed #ccc;font-size:0.8rem;">${recTitle} <strong>${escapeHtml(result.cafe.name)}</strong> (${approxText})</div>`;
     }
   }
@@ -309,7 +309,7 @@ function buildPopupContent(place) {
   const isVisited = visitedPlaces.includes(place.id);
   const isInCourse = course.includes(place.id);
   const distanceHtml = renderDistanceFromUser(place) ? `<div style="margin-top:4px;font-size:0.78rem;color:#3c7a5e;font-weight:600;">${renderDistanceFromUser(place)}</div>` : "";
-  
+
   let routeBtnText = "🚗 여기까지 경로 보기";
   if (currentLang === "en") routeBtnText = "🚗 Route to here";
   if (currentLang === "de") routeBtnText = "🚗 Route hierher";
@@ -382,7 +382,7 @@ window.showRouteTo = function(placeId) {
     draggableWaypoints: false,
     fitSelectedRoutes: true,
     show: false,
-    createMarker: () => null, 
+    createMarker: () => null,
     lineOptions: { styles: [{ color: "#c65a3c", weight: 5, opacity: 0.8 }] },
   }).addTo(map);
 };
@@ -401,7 +401,7 @@ window.toggleCourse = function (id) {
   const wasEmpty = course.length === 0;
   if (idx === -1) {
     course.push(id);
-    if (wasEmpty) setCourseExpanded(true); 
+    if (wasEmpty) setCourseExpanded(true);
   } else {
     course.splice(idx, 1);
   }
@@ -409,7 +409,7 @@ window.toggleCourse = function (id) {
   renderCoursePanel();
   updateCourseRouteIfNeeded();
   refreshPopupIfOpen(id);
-  refreshListItem(id); 
+  refreshListItem(id);
 };
 
 window.moveCourseItem = function (id, direction) {
@@ -428,7 +428,7 @@ function clearCourse() {
   saveCourse();
   renderCoursePanel();
   clearRoute();
-  setCourseExpanded(false); 
+  setCourseExpanded(false);
   affectedIds.forEach((id) => refreshListItem(id));
 }
 
@@ -741,7 +741,7 @@ function refreshPopupIfOpen(id) {
 
 function pulseMarker(marker) {
   const el = marker.getElement && marker.getElement();
-  if (!el) return; 
+  if (!el) return;
   const dot = el.querySelector(".place-marker-dot");
   if (!dot) return;
   dot.classList.add("marker-pulse");
@@ -759,7 +759,7 @@ function focusOnMarker(place, marker, targetZoom) {
 
   if (useCluster && markerLayer.zoomToShowLayer) {
     markerLayer.zoomToShowLayer(marker, finish);
-    setTimeout(finish, 1200); 
+    setTimeout(finish, 1200);
   } else {
     map.setView([place.lat, place.lng], targetZoom);
     finish();
@@ -810,7 +810,6 @@ function applyFilters() {
         li.classList.add("highlight-flash");
         li.onanimationend = () => li.classList.remove("highlight-flash");
       }
-      // 💡 [2안 최적화] 모바일에서 지도의 핀(마커)을 탭하면 바닥 시트가 아래로 쏙 내려가며 지도를 넓게 비춤
       if (window.innerWidth <= 768) {
         setMobileSheetState('collapsed');
       }
@@ -826,7 +825,6 @@ function applyFilters() {
 
     li.addEventListener("click", () => {
       focusOnMarker(place, marker, 15);
-      // 💡 [2안 최적화] 모바일 리스트에서 가게를 터치하면 시트가 자동으로 쏙 내려가면서 지도를 넓게 강조
       if (window.innerWidth <= 768) {
         setMobileSheetState('collapsed');
       }
@@ -855,8 +853,8 @@ function drawUserMarker(loc, popupText) {
   map.setView([loc.lat, loc.lng], 14);
 
   applyFilters();
-  renderCoursePanel(); 
-  updateCourseRouteIfNeeded(); 
+  renderCoursePanel();
+  updateCourseRouteIfNeeded();
 }
 
 function requestUserLocation() {
@@ -882,43 +880,6 @@ function requestUserLocation() {
   );
 }
 
-function applyUIText() {
-  document.getElementById("app-header").querySelector("h1").textContent = t("headerTitle");
-  document.getElementById("app-header").querySelector(".subtitle").textContent = t("headerSubtitle");
-  document.getElementById("search-input").placeholder = t("searchPlaceholder");
-
-  const filterMore = document.getElementById("filter-more");
-  const filterToggleBtn = document.getElementById("filter-toggle-btn");
-  filterToggleBtn.textContent = filterMore.classList.contains("expanded")
-    ? t("filterMoreExpanded")
-    : t("filterMoreCollapsed");
-
-  const veganLabel = document.getElementById("vegan-checkbox")?.closest("label");
-  if (veganLabel) veganLabel.lastChild.textContent = " " + t("veganLabel");
-  const spicyLabel = document.getElementById("spicy-checkbox")?.closest("label");
-  if (spicyLabel) spicyLabel.lastChild.textContent = " " + t("spicyLabel");
-  const photospotLabel = document.getElementById("photospot-checkbox")?.closest("label");
-  if (photospotLabel) photospotLabel.lastChild.textContent = " " + t("photospotLabel");
-  const favonlyLabel = document.getElementById("fav-only-checkbox")?.closest("label");
-  if (favonlyLabel) favonlyLabel.lastChild.textContent = " " + t("favonlyLabel");
-
-  const locateBtn = document.getElementById("locate-btn");
-  if (!locateBtn.classList.contains("active")) {
-    locateBtn.textContent = t("locateDefault");
-  } else {
-    locateBtn.textContent = isRealGpsLocation ? t("locateActiveReal") : t("locateActiveFallback");
-  }
-
-  document.getElementById("clear-route-btn").textContent = t("clearRouteBtn");
-  document.getElementById("course-empty").textContent = t("courseEmpty");
-  document.getElementById("course-clear-btn").textContent = t("courseClearBtn");
-  document.getElementById("course-recommend-btn").textContent = t("courseRecommendBtn");
-  document.getElementById("roulette-btn").textContent = t("rouletteBtn");
-  document.querySelector("#roulette-modal .modal-subtitle").textContent = t("rouletteModalSubtitle");
-  document.querySelectorAll(".modal-close-btn").forEach((b) => (b.textContent = t("modalConfirm")));
-  document.getElementById("taste-recommend-btn").textContent = t("tasteRecommendBtn");
-}
-
 function refreshCategoryAndPriceButtonLabels() {
   document.querySelectorAll("#category-buttons .cat-btn").forEach((btn) => {
     const cat = btn.dataset.category;
@@ -935,22 +896,15 @@ function setLanguage(lang) {
   currentLang = lang;
   document.querySelectorAll(".lang-btn").forEach((b) => b.classList.toggle("active", b.dataset.lang === lang));
 
-  applyPlaceTranslations(lang); 
-  applyUIText(); 
+  applyPlaceTranslations(lang);
+  applyUIText();
   refreshCategoryAndPriceButtonLabels();
   updateLevelBadge();
   renderCoursePanel();
-  applyFilters(); 
-  
-  const openPopup = map.getPopup();
-  if (openPopup && openPopup.isOpen()) {
-    for (const id in markerMap) {
-      if (markerMap[id].getPopup() === openPopup) {
-        refreshPopupIfOpen(Number(id));
-        break;
-      }
-    }
-  }
+  applyFilters();
+  // 참고: 예전엔 여기서 map.getPopup()을 불렀는데, Leaflet의 지도 객체엔 그런 함수가
+  // 없어서 언어를 바꿀 때마다 콘솔에 에러가 났음. 위 applyFilters()가 이미 마커/팝업을
+  // 전부 새로 그리면서 새 언어를 반영하기 때문에, 이 블록 자체가 불필요했음.
 }
 
 // ==========================================================================
@@ -963,11 +917,11 @@ let isDraggingSheet = false;
 function setMobileSheetState(state) {
   const sidebar = document.getElementById("sidebar");
   sidebar.classList.remove("sheet-expanded", "sheet-half", "sheet-collapsed");
-  
+
   if (state === 'expanded') sidebar.classList.add("sheet-expanded");
   else if (state === 'half') sidebar.classList.add("sheet-half");
   else sidebar.classList.add("sheet-collapsed");
-  
+
   setTimeout(() => { if(map) map.invalidateSize(); }, 320);
 }
 
@@ -986,9 +940,11 @@ function initMobileSwipeEngine() {
     if (!isDraggingSheet) return;
     tmY = e.touches[0].clientY;
     let deltaY = tmY - tsY;
-    
-    let fullH = window.innerHeight * 0.8;
-    let baseTranslate = fullH - 44;
+
+    // 💡 아래 baseTranslate 값은 CSS의 .sheet-collapsed 규칙(translateY(100vh - 60px))과
+    // 반드시 똑같아야 함. 예전엔 여기가 0.8*innerHeight - 44 였는데 CSS 값이랑 안 맞아서,
+    // 손을 뗄 때 시트가 순간이동하듯 뚝 끊기는 버벅임이 있었음.
+    let baseTranslate = window.innerHeight - 60;
     let currentTranslate = baseTranslate + deltaY;
 
     if (sidebar.classList.contains("sheet-expanded")) currentTranslate = 0 + deltaY;
@@ -1046,7 +1002,7 @@ async function startApp() {
 
   map = L.map("map", { zoomControl: false }).setView([51.2277, 6.7735], 12);
   L.control.zoom({ position: 'topleft' }).addTo(map);
-  
+
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors",
   }).addTo(map);
@@ -1137,7 +1093,7 @@ async function startApp() {
   }
 
   const loadingEl = document.getElementById("map-loading");
-  if (loadingEl) loadingEl.remove(); 
+  if (loadingEl) loadingEl.remove();
 }
 
 startApp();

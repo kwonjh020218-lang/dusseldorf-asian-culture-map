@@ -52,7 +52,6 @@ body {
 .lang-btn .flag-img {
   width: 24px;
   height: 17px;
-  object-fit: cover;
   border-radius: 3px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   display: block;
@@ -476,7 +475,7 @@ body {
     border-top: 1px solid #e0dccf;
     box-shadow: 0 -4px 20px rgba(27, 42, 74, 0.2);
     z-index: 999;
-    
+
     /* 제스처 움직임을 처리하기 위한 하드웨어 가속 전환 스택 */
     transform: translateY(calc(80vh - 44px)); /* 기본은 최하단으로 정렬 */
     transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -486,8 +485,8 @@ body {
   /* 활성화 상태 격자 제어 */
   #sidebar.sheet-expanded { transform: translateY(0); }
   #sidebar.sheet-half { transform: translateY(40vh); }
-#sidebar.sheet-collapsed { 
-  transform: translateY(calc(100vh - 60px)) !important; 
+#sidebar.sheet-collapsed {
+  transform: translateY(calc(100vh - 60px)) !important;
 }
 
   /* 끌어당기는 드래그 핸들 바 코어 디자인 */
@@ -529,7 +528,7 @@ body {
     gap: 0.4rem;
     padding-bottom: 0.4rem;
   }
-  #category-buttons::-webkit-scrollbar, 
+  #category-buttons::-webkit-scrollbar,
   #price-buttons::-webkit-scrollbar {
     display: none;
   }
