@@ -164,7 +164,6 @@ function translateCategoryName(category) {
   return entry ? entry[currentLang] || category : category;
 }
 
-// 스키마 에러 방지 및 예외처리를 고도화한 매핑 로직
 function applyPlaceTranslations(lang) {
   if (lang === "ko") {
     places = basePlaces.map((p) => ({ ...p }));
@@ -174,7 +173,6 @@ function applyPlaceTranslations(lang) {
     const tr = p._translations && p._translations[lang];
     let translatedName = p.name;
 
-    // 💡 DB 스키마 400 에러를 방지하기 위해, 특정 예외 데이터(일본식 정원) 처리는 인터페이스단에서 안전하게 바인딩
     if (p.name.includes("일본식정원") || p.name.includes("일본식 정원")) {
       if (lang === "en") translatedName = "Japanese Garden (Nordpark)";
       if (lang === "de") translatedName = "Japanischer Garten (Nordpark)";
@@ -183,4 +181,38 @@ function applyPlaceTranslations(lang) {
     if (!tr) return { ...p, name: translatedName };
     return { ...p, name: translatedName, note: tr.note, menu: tr.menu };
   });
+}
+
+function applyUIText() {
+  document.getElementById("app-header").querySelector("h1").textContent = t("headerTitle");
+  document.getElementById("app-header").querySelector(".subtitle").textContent = t("headerSubtitle");
+  document.getElementById("search-input").placeholder = t("searchPlaceholder");
+
+  const filterMore = document.getElementById("filter-more");
+  const filterToggleBtn = document.getElementById("filter-toggle-btn");
+  filterToggleBtn.textContent = filterMore.classList.contains("expanded")
+    ? t("filterMoreExpanded")
+    : t("filterMoreCollapsed");
+
+  const veganLabel = document.getElementById("vegan-checkbox")?.closest("label");
+  if (veganLabel) veganLabel.lastChild.textContent = " " + t("veganLabel");
+  const spicyLabel = document.getElementById("spicy-checkbox")?.closest("label");
+  if (spicyLabel) spicyLabel.lastChild.textContent = " " + t("spicyLabel");
+  const photospotLabel = document.getElementById("photospot-checkbox")?.closest("label");
+  if (photospotLabel) photospotLabel.lastChild.textContent = " " + t("photospotLabel");
+  const favonlyLabel = document.getElementById("fav-only-checkbox")?.closest("label");
+  if (favonlyLabel) favonlyLabel.lastChild.textContent = " " + t("favonlyLabel");
+
+  if (!document.getElementById("locate-btn").classList.contains("active")) {
+    // 💡 초기화 로직에서도 내 위치 아이콘을 🎯로 안전하게 교체 처리합니다.
+    document.getElementById("locate-btn").textContent = t("locateDefault").replace("📍", "🎯");
+  }
+  document.getElementById("clear-route-btn").textContent = t("clearRouteBtn");
+  document.getElementById("course-empty").textContent = t("courseEmpty");
+  document.getElementById("course-clear-btn").textContent = t("courseClearBtn");
+  document.getElementById("course-recommend-btn").textContent = t("courseRecommendBtn");
+  document.getElementById("roulette-btn").textContent = t("rouletteBtn");
+  document.querySelector("#roulette-modal .modal-subtitle").textContent = t("rouletteModalSubtitle");
+  document.querySelectorAll(".modal-close-btn").forEach((b) => (b.textContent = t("modalConfirm")));
+  document.getElementById("taste-recommend-btn").textContent = t("tasteRecommendBtn");
 }
