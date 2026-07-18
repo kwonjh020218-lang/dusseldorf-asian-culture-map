@@ -113,7 +113,7 @@ let basePlaces = []; // 한국어 원본 데이터 (언어 전환 시 이걸 기
 function normalizePlace(row) {
   const translations = {};
   (row.place_translations || []).forEach((tr) => {
-    // ⚠️ 여기서 tr.name 은 반드시 모두 '소문자'여야 합니다! (데이터베이스의 컬럼명과 일치)
+    // DB에서 가져온 name, note, menu를 소문자로 정확하게 매칭합니다.
     translations[tr.lang] = { name: tr.name, note: tr.note, menu: tr.menu || [] };
   });
 
@@ -130,7 +130,7 @@ function normalizePlace(row) {
     note: row.note,
     priceLevel: row.price_level,
     menu: row.menu || [],
-    _translations: translations,
+    _translations: translations, // { en: {name, note, menu}, de: {name, note, menu} }
   };
 }
 async function fetchPlaces() {
