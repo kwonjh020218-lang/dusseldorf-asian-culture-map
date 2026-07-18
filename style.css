@@ -29,46 +29,41 @@ body {
   margin-top: 0.2rem;
 }
 
-/* 국기 이미지 전용 스위처 레이아웃 */
+/* 💡 국기 아이콘 전용 라운드 스위처 스타일 디자인 */
 #lang-switcher {
   display: flex;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
   background: #12203d;
 }
 .lang-btn {
   border: 1px solid #3a4a6b;
   background: transparent;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #cfd6e4;
-  padding: 0.4rem 0.8rem;
+  padding: 0.4rem 0.6rem;
   border-radius: 8px;
   cursor: pointer;
-  font-family: inherit;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-/* 국기 이미지 강제 크기 규격 지정 */
 .lang-btn .flag-img {
-  width: 20px;
-  height: 14px;
+  width: 24px;
+  height: 17px;
   object-fit: cover;
-  border-radius: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  display: block;
 }
 .lang-btn:hover {
   border-color: #c65a3c;
-  background: rgba(198, 90, 60, 0.1);
+  background: rgba(198, 90, 60, 0.15);
 }
 .lang-btn.active {
   background: #c65a3c;
   border-color: #c65a3c;
-  color: #fff;
-  transform: scale(1.03);
-  box-shadow: 0 0 8px rgba(198, 90, 60, 0.6);
+  transform: scale(1.06);
+  box-shadow: 0 0 10px rgba(198, 90, 60, 0.6);
 }
 
 #top-strip {
