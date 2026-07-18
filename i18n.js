@@ -144,7 +144,7 @@ const UI_TRANSLATIONS = {
     "alertNeedLocation": "Bitte zuerst auf '🎯 Mein Standort' tippen!",
     "alertNoRestaurantForCourse": "Keine Restaurants entsprechen den aktuellen Filtern, daher konnte keine Route erstellt werden. Filter lockern?",
     "alertTasteNotEnough": "Noch nicht genug Daten für eine Geschmacksanalyse ({count}/3 Orte).\nFüge Favoriten hinzu oder markiere besuchte Orte!",
-    "alertTasteNoMatch": "Ke인 neuer Ort passend zu deinem Geschmack gefunden. Erkunde etwas mehr Vielfalt!",
+    "alertTasteNoMatch": "Kein neuer Ort passend zu deinem Geschmack gefunden. Erkunde etwas mehr Vielfalt!",
     "noResults": "Keine Orte gefunden.<br>Passe deine Suche oder Filter an.",
     "mapLoading": "Karte wird geladen...",
     "mapLoadFailed": "Karte konnte nicht geladen werden.<br>Bitte Internetverbindung prüfen oder ein anderes Netzwerk (z. B. Mobilfunk-Hotspot) versuchen.",
@@ -201,7 +201,13 @@ function applyUIText() {
   const favonlyLabel = document.getElementById("fav-only-checkbox")?.closest("label");
   if (favonlyLabel) favonlyLabel.lastChild.textContent = " " + t("favonlyLabel");
 
-  document.getElementById("locate-btn").textContent = isRealGpsLocation ? t("locateActiveReal") : (userLocation ? t("locateActiveFallback") : t("locateDefault"));
+  const locateBtn = document.getElementById("locate-btn");
+  if (!locateBtn.classList.contains("active")) {
+    locateBtn.textContent = t("locateDefault");
+  } else {
+    locateBtn.textContent = isRealGpsLocation ? t("locateActiveReal") : t("locateActiveFallback");
+  }
+
   document.getElementById("clear-route-btn").textContent = t("clearRouteBtn");
   document.getElementById("course-empty").textContent = t("courseEmpty");
   document.getElementById("course-clear-btn").textContent = t("courseClearBtn");
