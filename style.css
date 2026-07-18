@@ -486,7 +486,9 @@ body {
   /* 활성화 상태 격자 제어 */
   #sidebar.sheet-expanded { transform: translateY(0); }
   #sidebar.sheet-half { transform: translateY(40vh); }
-  #sidebar.sheet-collapsed { transform: translateY(calc(80vh - 44px)); }
+#sidebar.sheet-collapsed { 
+  transform: translateY(calc(100vh - 60px)) !important; 
+}
 
   /* 끌어당기는 드래그 핸들 바 코어 디자인 */
   #sidebar-handle {
