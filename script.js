@@ -40,8 +40,8 @@ const CLUSTER_JS_URLS = [
   "https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"
 ];
 const CLUSTER_CSS_URLS = [
-  ["https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css", "https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.4.1/dist/MarkerCluster.css"],
-  ["https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css", "https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css"]
+  ["https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css", "https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css"],
+  ["https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css", "https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css"]
 ];
 const ROUTING_JS_URLS = [
   "https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js",
@@ -49,7 +49,7 @@ const ROUTING_JS_URLS = [
 ];
 const ROUTING_CSS_URLS = [
   "https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css",
-  "https://cdn.jsdelivr.net/npm/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
+  "https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
 ];
 
 async function loadFromCdns(urls, checkFn) {
@@ -798,8 +798,10 @@ function applyFilters() {
     marker.bindPopup(() => buildPopupContent(place), { maxWidth: 260, minWidth: 200 });
 
     const priceForTooltip = place.priceLevel ? PRICE_RANGES[place.priceLevel] : "";
+    
+    // 💡 핵심 버그 해결: 마우스 오버(Tooltip) 빌더에 translateCategoryName(place.category)를 연동하여 다국어 즉시 번역 처리
     marker.bindTooltip(
-      `<strong>${escapeHtml(place.name)}</strong><br><span style="font-size:11px;color:#666;">${place.category}${priceForTooltip ? " · " + priceForTooltip : ""}</span>`,
+      `<strong>${escapeHtml(place.name)}</strong><br><span style="font-size:11px;color:#666;">${translateCategoryName(place.category)}${priceForTooltip ? " · " + priceForTooltip : ""}</span>`,
       { direction: "top", offset: [0, -10], className: "place-tooltip" }
     );
 
@@ -896,7 +898,6 @@ function applyUIText() {
   const favonlyLabel = document.getElementById("fav-only-checkbox")?.closest("label");
   if (favonlyLabel) favonlyLabel.lastChild.textContent = " " + t("favonlyLabel");
 
-  // 💡 아이콘 보존 강제 갱신 로직 우회 바인딩
   const locateBtn = document.getElementById("locate-btn");
   if (!locateBtn.classList.contains("active")) {
     locateBtn.textContent = t("locateDefault");
@@ -940,9 +941,6 @@ function setLanguage(lang) {
   places.forEach((place) => {
     refreshPopupIfOpen(place.id);
   });
-
-  // 💡 언어 전환 시 국기 이미지 유지용 트리거 재호출
-  if (window.twemoji) twemoji.parse(document.getElementById('lang-switcher'));
 }
 
 async function startApp() {
@@ -1057,10 +1055,6 @@ async function startApp() {
 
   const loadingEl = document.getElementById("map-loading");
   if (loadingEl) loadingEl.remove(); 
-}
-
-function saveCourse() {
-  safeStorageSet("course", course);
 }
 
 startApp();
