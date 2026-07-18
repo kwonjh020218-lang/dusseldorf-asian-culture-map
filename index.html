@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>뒤셀도르프 아시안 컬처 맵</title>
+
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗺️</text></svg>" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -14,12 +15,12 @@
     <p class="subtitle">맛집·마트부터 만화카페·서점·명소까지</p>
   </header>
 
-  <!-- 웹 접근성(aria-label)을 준수한 국기 변환 스위처 -->
- <div id="lang-switcher">
-  <button class="lang-btn active" data-lang="ko" type="button" aria-label="한국어">대한민국 🇰🇷</button>
-  <button class="lang-btn" data-lang="en" type="button" aria-label="English">영국 🇬🇧</button>
-  <button class="lang-btn" data-lang="de" type="button" aria-label="Deutsch">독일 🇩🇪</button>
-</div>
+  <!-- 💡 직관적인 한글 국가명과 국기 이모지를 완벽하게 고정 수정한 스위처 구역 -->
+  <div id="lang-switcher">
+    <button class="lang-btn active" data-lang="ko" type="button" aria-label="한국어">대한민국 🇰🇷</button>
+    <button class="lang-btn" data-lang="en" type="button" aria-label="English">영국 🇬🇧</button>
+    <button class="lang-btn" data-lang="de" type="button" aria-label="Deutsch">독일 🇩🇪</button>
+  </div>
 
   <div id="top-strip">
     <div id="level-badge">Lv.0 · 시작 전</div>
@@ -54,24 +55,48 @@
         <span class="handle-bar" aria-hidden="true"></span>
       </button>
       <div id="filter-panel">
-        <input type="text" id="search-input" placeholder="장소 이름으로 검색..." aria-label="장소 이름으로 검색" />
+        <input
+          type="text"
+          id="search-input"
+          placeholder="장소 이름으로 검색..."
+          aria-label="장소 이름으로 검색"
+        />
+
         <div id="category-buttons"></div>
+
         <button id="filter-toggle-btn" type="button" aria-expanded="false" aria-controls="filter-more">⚙️ 필터 더보기 ▾</button>
 
         <div id="filter-more">
           <div id="price-buttons"></div>
+
           <div style="display: flex; gap: 1rem; margin-top: 2px;">
-            <label class="checkbox-label"><input type="checkbox" id="vegan-checkbox" /> 🌱 비건 있음</label>
-            <label class="checkbox-label"><input type="checkbox" id="spicy-checkbox" /> 🌶️ 매운 음식 있음</label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="vegan-checkbox" />
+              🌱 비건 있음
+            </label>
+
+            <label class="checkbox-label">
+              <input type="checkbox" id="spicy-checkbox" />
+              🌶️ 매운 음식 있음
+            </label>
           </div>
-          <label class="checkbox-label"><input type="checkbox" id="photospot-checkbox" /> 📸 인생샷 스팟만 보기</label>
-          <label class="checkbox-label"><input type="checkbox" id="fav-only-checkbox" /> ⭐ 즐겨찾기 해둔 곳만 보기</label>
+
+          <label class="checkbox-label">
+            <input type="checkbox" id="photospot-checkbox" />
+            📸 인생샷 스팟만 보기
+          </label>
+
+          <label class="checkbox-label">
+            <input type="checkbox" id="fav-only-checkbox" />
+            ⭐ 즐겨찾기 해둔 곳만 보기
+          </label>
         </div>
 
-    <div id="location-row">
-  <button id="locate-btn" type="button">🎯 내 위치</button>
-  <button id="clear-route-btn" type="button">🚗 경로 지우기</button>
-</div>
+        <!-- 💡 내 위치 아이콘을 가본 곳 마커와 겹치지 않게 🎯 아이콘으로 완전히 수정 고정한 구역 -->
+        <div id="location-row">
+          <button id="locate-btn" type="button">🎯 내 위치</button>
+          <button id="clear-route-btn" type="button">🚗 경로 지우기</button>
+        </div>
       </div>
 
       <!-- 나만의 코스 패널 -->
