@@ -1,4 +1,3 @@
-// ===== XSS Prevention Edge Layer =====
 function escapeHtml(str) {
   if (str === null || str === undefined) return "";
   return String(str)
@@ -83,7 +82,6 @@ async function loadAllLibraries() {
   return true;
 }
 
-// ===== Supabase Infrastructure Configuration =====
 const SUPABASE_URL = "https://txqazmmndbpcbokpipbp.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_0xcR1WbZcpIg271GEsnBYw_WWPK1uu7";
 
@@ -114,7 +112,6 @@ function normalizePlace(row) {
 }
 
 async function fetchPlaces() {
-  // 💡 400 에러를 방지하기 위해 검증된 원본 쿼리 구조(lang,note,menu)로 호출
   const response = await fetch(
     `${SUPABASE_URL}/rest/v1/places?select=*,place_translations(lang,note,menu)&order=id`,
     {
@@ -149,7 +146,6 @@ function safeStorageSet(key, value) {
   } catch (e) {}
 }
 
-// ===== Global Application State =====
 let favorites = safeStorageGet("favorites", []); 
 let visitedPlaces = safeStorageGet("visitedPlaces", []); 
 let currentCategory = "전체"; 
@@ -244,14 +240,14 @@ function findNearestCafe(place) {
 function renderDistanceFromUser(place) {
   if (!userLocation) return "";
   const km = getDistanceKm(userLocation.lat, userLocation.lng, place.lat, place.lng);
-  const label = isRealGpsLocation ? t("courseStartReal").replace("📍 출발점: ", "") : t("courseStartFallback").replace("📍 출발점: ", "");
+  const label = isRealGpsLocation ? t("courseStartReal").replace("🎯 출발점: ", "") : t("courseStartFallback").replace("🎯 출발점: ", "");
   
   if (currentLang === "ko") {
-    return km < 1 ? `📍 ${label}에서 약 ${Math.round(km * 1000)}m` : `📍 ${label}에서 약 ${km.toFixed(1)}km`;
+    return km < 1 ? `🎯 ${label}에서 약 ${Math.round(km * 1000)}m` : `🎯 ${label}에서 약 ${km.toFixed(1)}km`;
   } else if (currentLang === "de") {
-    return km < 1 ? `📍 Ca. ${Math.round(km * 1000)}m von ${label}` : `📍 Ca. ${km.toFixed(1)}km von ${label}`;
+    return km < 1 ? `🎯 Ca. ${Math.round(km * 1000)}m von ${label}` : `🎯 Ca. ${km.toFixed(1)}km von ${label}`;
   } else {
-    return km < 1 ? `📍 Approx. ${Math.round(km * 1000)}m from ${label}` : `📍 Approx. ${km.toFixed(1)}km from ${label}`;
+    return km < 1 ? `🎯 Approx. ${Math.round(km * 1000)}m from ${label}` : `🎯 Approx. ${km.toFixed(1)}km from ${label}`;
   }
 }
 
@@ -836,7 +832,7 @@ function applyFilters() {
 
 function drawUserMarker(loc, popupText) {
   const btn = document.getElementById("locate-btn");
-  btn.textContent = isRealGpsLocation ? t("locateActiveReal").replace("📍", "🎯") : t("locateActiveFallback").replace("📍", "🎯");
+  btn.textContent = isRealGpsLocation ? t("locateActiveReal") : t("locateActiveFallback");
   btn.classList.add("active");
 
   if (userMarker) map.removeLayer(userMarker);
@@ -863,13 +859,13 @@ function requestUserLocation() {
     btn.textContent = t("locateUnsupported");
     return;
   }
-  btn.textContent = t("locateSearching").replace("위치", "🎯 위치");
+  btn.textContent = t("locateSearching");
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
       userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
       isRealGpsLocation = true;
-      drawUserMarker(userLocation, "📍 나의 실시간 현재 위치");
+      drawUserMarker(userLocation, "🎯 나의 실시간 현재 위치");
     },
     (error) => {
       console.warn("GPS 호출 실패, 중앙역으로 대체 작동합니다.", error.message);
@@ -900,9 +896,14 @@ function applyUIText() {
   const favonlyLabel = document.getElementById("fav-only-checkbox")?.closest("label");
   if (favonlyLabel) favonlyLabel.lastChild.textContent = " " + t("favonlyLabel");
 
-  if (!document.getElementById("locate-btn").classList.contains("active")) {
-    document.getElementById("locate-btn").textContent = t("locateDefault");
+  // 💡 아이콘 보존 강제 갱신 로직 우회 바인딩
+  const locateBtn = document.getElementById("locate-btn");
+  if (!locateBtn.classList.contains("active")) {
+    locateBtn.textContent = t("locateDefault");
+  } else {
+    locateBtn.textContent = isRealGpsLocation ? t("locateActiveReal") : t("locateActiveFallback");
   }
+
   document.getElementById("clear-route-btn").textContent = t("clearRouteBtn");
   document.getElementById("course-empty").textContent = t("courseEmpty");
   document.getElementById("course-clear-btn").textContent = t("courseClearBtn");
@@ -939,6 +940,9 @@ function setLanguage(lang) {
   places.forEach((place) => {
     refreshPopupIfOpen(place.id);
   });
+
+  // 💡 언어 전환 시 국기 이미지 유지용 트리거 재호출
+  if (window.twemoji) twemoji.parse(document.getElementById('lang-switcher'));
 }
 
 async function startApp() {
@@ -1053,6 +1057,10 @@ async function startApp() {
 
   const loadingEl = document.getElementById("map-loading");
   if (loadingEl) loadingEl.remove(); 
+}
+
+function saveCourse() {
+  safeStorageSet("course", course);
 }
 
 startApp();
