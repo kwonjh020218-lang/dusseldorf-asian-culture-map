@@ -135,11 +135,9 @@ function normalizePlace(row) {
 }
 
 async function fetchPlaces() {
-  // place_translations(lang,note,menu) 부분이 핵심 - Supabase가 외래키(FK) 관계를
-  // 감지해서, places 한 번 요청으로 각 장소의 번역 데이터까지 함께 묶어서 내려줌
-  // (JOIN을 직접 안 짜도 PostgREST가 알아서 중첩된 배열로 만들어줌)
+  // 💡 괄호 안에 'name'을 추가하여 데이터베이스에서 번역된 이름 데이터도 함께 긁어오도록 주소를 수정합니다.
   const response = await fetch(
-    `${SUPABASE_URL}/rest/v1/places?select=*,place_translations(lang,note,menu)&order=id`,
+    `${SUPABASE_URL}/rest/v1/places?select=*,place_translations(lang,name,note,menu)&order=id`,
     {
       headers: {
         apikey: SUPABASE_ANON_KEY,
