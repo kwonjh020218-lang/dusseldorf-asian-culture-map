@@ -216,6 +216,7 @@ function translateCategoryName(category) {
 
 // basePlaces(항상 한국어 원본)에 현재 언어의 note/menu를 덮어씌워서 places를 다시 만듦.
 // category/type/좌표/불리언 값 등은 절대 안 바꿈 (필터링/마커색상 로직이 한국어 값 기준으로 동작하기 때문)
+// i18n.js 맨 아래에 있는 이 함수를 통째로 교체하세요
 function applyPlaceTranslations(lang) {
   if (lang === "ko") {
     places = basePlaces.map((p) => ({ ...p }));
@@ -224,7 +225,7 @@ function applyPlaceTranslations(lang) {
   places = basePlaces.map((p) => {
     const tr = p._translations && p._translations[lang];
     if (!tr) return { ...p };
-    // tr.name이 존재하면 번역된 이름으로 덮어쓰고, 없으면 원본 한국어 이름을 유지합니다.
+    // tr.name(번역된 이름)이 있으면 그것을 쓰고, 없으면 원본 이름을 유지합니다.
     return { ...p, name: tr.name || p.name, note: tr.note, menu: tr.menu };
   });
 }
