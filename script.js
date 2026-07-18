@@ -283,8 +283,18 @@ function findNearestCafe(place) {
 function renderDistanceFromUser(place) {
   if (!userLocation) return "";
   const km = getDistanceKm(userLocation.lat, userLocation.lng, place.lat, place.lng);
-  const label = isRealGpsLocation ? "내 위치" : "중앙역";
-  return km < 1 ? `📍 ${label}에서 약 ${Math.round(km * 1000)}m` : `📍 ${label}에서 약 ${km.toFixed(1)}km`;
+  
+  // '내 위치', '중앙역' 단어를 언어 상태에 맞게 가져오기
+  const label = isRealGpsLocation ? t("courseStartReal").replace("📍 출발점: ", "") : t("courseStartFallback").replace("📍 출발점: ", "");
+  
+  // 한국어 / 영어 / 독일어 어순과 표현 방식 분기
+  if (currentLang === "ko") {
+    return km < 1 ? `📍 ${label}에서 약 ${Math.round(km * 1000)}m` : `📍 ${label}에서 약 ${km.toFixed(1)}km`;
+  } else if (currentLang === "de") {
+    return km < 1 ? `📍 Ca. ${Math.round(km * 1000)}m von ${label}` : `📍 Ca. ${km.toFixed(1)}km von ${label}`;
+  } else {
+    return km < 1 ? `📍 Approx. ${Math.round(km * 1000)}m from ${label}` : `📍 Approx. ${km.toFixed(1)}km from ${label}`;
+  }
 }
 
 function getFlagSvg(category) {
