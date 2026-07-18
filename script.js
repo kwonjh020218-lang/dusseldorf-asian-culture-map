@@ -1038,6 +1038,11 @@ function setLanguage(lang) {
   updateLevelBadge();
   renderCoursePanel();
   applyFilters(); // 리스트/팝업/툴팁이 새 언어로 다시 그려짐
+  
+  // [실시간 갱신 기능 추가] 국기를 눌렀을 때 현재 맵에 열려있는 말풍선 팝업창의 텍스트도 강제 갱신
+  places.forEach((place) => {
+    refreshPopupIfOpen(place.id);
+  });
 }
 
 async function startApp() {
