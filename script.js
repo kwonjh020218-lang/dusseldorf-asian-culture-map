@@ -49,7 +49,7 @@ const ROUTING_JS_URLS = [
 ];
 const ROUTING_CSS_URLS = [
   "https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css",
-  "https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
+  "https://cdn.jsdelivr.net/npm/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
 ];
 
 async function loadFromCdns(urls, checkFn) {
@@ -798,22 +798,19 @@ function applyFilters() {
     marker.bindPopup(() => buildPopupContent(place), { maxWidth: 260, minWidth: 200 });
 
     const priceForTooltip = place.priceLevel ? PRICE_RANGES[place.priceLevel] : "";
-    
-    // 💡 핵심 버그 해결: 마우스 오버(Tooltip) 빌더에 translateCategoryName(place.category)를 연동하여 다국어 즉시 번역 처리
     marker.bindTooltip(
       `<strong>${escapeHtml(place.name)}</strong><br><span style="font-size:11px;color:#666;">${translateCategoryName(place.category)}${priceForTooltip ? " · " + priceForTooltip : ""}</span>`,
       { direction: "top", offset: [0, -10], className: "place-tooltip" }
     );
 
+    // 💡 [성능 최적화 패치 1] 브라우저 지연 원인이던 setTimeout 제거 및 연산이 가벼운 'nearest' 스크롤 방식 장착
     marker.on("click", () => {
-      setTimeout(() => {
-        const li = document.getElementById(`place-item-${place.id}`);
-        if (li) {
-          li.scrollIntoView({ behavior: "smooth", block: "center" });
-          li.classList.add("highlight-flash");
-          setTimeout(() => li.classList.remove("highlight-flash"), 3000);
-        }
-      }, 100);
+      const li = document.getElementById(`place-item-${place.id}`);
+      if (li) {
+        li.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        li.classList.add("highlight-flash");
+        li.onanimationend = () => li.classList.remove("highlight-flash");
+      }
     });
 
     markerLayer.addLayer(marker);
@@ -927,6 +924,7 @@ function refreshCategoryAndPriceButtonLabels() {
   });
 }
 
+// 💡 [성능 최적화 패치 2] 언어 변경 시 무겁게 수백 개 루프를 돌던 로직을 지우고, 활성화된 '현재 열려있는 팝업'만 갱신
 function setLanguage(lang) {
   currentLang = lang;
   document.querySelectorAll(".lang-btn").forEach((b) => b.classList.toggle("active", b.dataset.lang === lang));
@@ -938,9 +936,15 @@ function setLanguage(lang) {
   renderCoursePanel();
   applyFilters(); 
   
-  places.forEach((place) => {
-    refreshPopupIfOpen(place.id);
-  });
+  const openPopup = map.getPopup();
+  if (openPopup && openPopup.isOpen()) {
+    for (const id in markerMap) {
+      if (markerMap[id].getPopup() === openPopup) {
+        refreshPopupIfOpen(Number(id));
+        break;
+      }
+    }
+  }
 }
 
 async function startApp() {
