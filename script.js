@@ -49,7 +49,7 @@ const ROUTING_JS_URLS = [
 ];
 const ROUTING_CSS_URLS = [
   "https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css",
-  "https://cdn.jsdelivr.net/npm/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
+  "https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
 ];
 
 async function loadFromCdns(urls, checkFn) {
@@ -803,13 +803,16 @@ function applyFilters() {
       { direction: "top", offset: [0, -10], className: "place-tooltip" }
     );
 
-    // 💡 [성능 최적화 패치 1] 브라우저 지연 원인이던 setTimeout 제거 및 연산이 가벼운 'nearest' 스크롤 방식 장착
     marker.on("click", () => {
       const li = document.getElementById(`place-item-${place.id}`);
       if (li) {
         li.scrollIntoView({ behavior: "smooth", block: "nearest" });
         li.classList.add("highlight-flash");
         li.onanimationend = () => li.classList.remove("highlight-flash");
+      }
+      // 💡 모바일에서 마커 클릭 시 정보 식별을 돕기 위해 하단 시트를 중간(Half) 높이로 자동 전환
+      if (window.innerWidth <= 768) {
+        setMobileSheetState('half');
       }
     });
 
@@ -823,6 +826,10 @@ function applyFilters() {
 
     li.addEventListener("click", () => {
       focusOnMarker(place, marker, 15);
+      // 💡 리스트 아이템 클릭 후 지도 포커싱 시 모바일에서는 시트를 최하단으로 숨김 처리
+      if (window.innerWidth <= 768) {
+        setMobileSheetState('collapsed');
+      }
     });
 
     listEl.appendChild(li);
@@ -924,7 +931,6 @@ function refreshCategoryAndPriceButtonLabels() {
   });
 }
 
-// 💡 [성능 최적화 패치 2] 언어 변경 시 무겁게 수백 개 루프를 돌던 로직을 지우고, 활성화된 '현재 열려있는 팝업'만 갱신
 function setLanguage(lang) {
   currentLang = lang;
   document.querySelectorAll(".lang-btn").forEach((b) => b.classList.toggle("active", b.dataset.lang === lang));
@@ -947,6 +953,89 @@ function setLanguage(lang) {
   }
 }
 
+// ==========================================================================
+// 💡 [구글맵 제스처 모듈] 모바일 스와이프 인터랙션 코어 엔진
+// ==========================================================================
+let tsY = 0;
+let tmY = 0;
+let isDraggingSheet = false;
+
+function setMobileSheetState(state) {
+  const sidebar = document.getElementById("sidebar");
+  sidebar.classList.remove("sheet-expanded", "sheet-half", "sheet-collapsed");
+  
+  if (state === 'expanded') sidebar.classList.add("sheet-expanded");
+  else if (state === 'half') sidebar.classList.add("sheet-half");
+  else sidebar.classList.add("sheet-collapsed");
+  
+  setTimeout(() => { if(map) map.invalidateSize(); }, 320);
+}
+
+function initMobileSwipeEngine() {
+  const handle = document.getElementById("sidebar-handle");
+  const sidebar = document.getElementById("sidebar");
+  if (!handle || !sidebar) return;
+
+  handle.addEventListener("touchstart", (e) => {
+    tsY = e.touches[0].clientY;
+    isDraggingSheet = true;
+    sidebar.style.transition = "none"; // 드래그 중에는 애니메이션 해제
+  }, { passive: true });
+
+  handle.addEventListener("touchmove", (e) => {
+    if (!isDraggingSheet) return;
+    tmY = e.touches[0].clientY;
+    let deltaY = tmY - tsY;
+    
+    // 실시간 드래그 변위 좌표 계산 (바닥 이탈 방지)
+    let fullH = window.innerHeight * 0.8;
+    let baseTranslate = fullH - 44;
+    let currentTranslate = baseTranslate + deltaY;
+
+    if (sidebar.classList.contains("sheet-expanded")) currentTranslate = 0 + deltaY;
+    if (sidebar.classList.contains("sheet-half")) currentTranslate = (window.innerHeight * 0.4) + deltaY;
+
+    if (currentTranslate >= 0 && currentTranslate <= baseTranslate) {
+      sidebar.style.transform = `translateY(${currentTranslate}px)`;
+    }
+  }, { passive: true });
+
+  handle.addEventListener("touchend", (e) => {
+    if (!isDraggingSheet) return;
+    isDraggingSheet = false;
+    sidebar.style.transition = "transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)";
+
+    let fullH = window.innerHeight * 0.8;
+    let currentY = e.changedTouches[0].clientY;
+    let deltaY = currentY - tsY;
+
+    // 임계값(Threshold) 연산을 통한 구글맵 스냅 스위칭
+    if (Math.abs(deltaY) > 40) {
+      if (deltaY < 0) {
+        // 위로 밀었을 때
+        if (sidebar.classList.contains("sheet-collapsed")) setMobileSheetState('half');
+        else setMobileSheetState('expanded');
+      } else {
+        // 아래로 밀었을 때
+        if (sidebar.classList.contains("sheet-expanded")) setMobileSheetState('half');
+        else setMobileSheetState('collapsed');
+      }
+    } else {
+      // 복원 복구
+      if (sidebar.classList.contains("sheet-expanded")) setMobileSheetState('expanded');
+      else if (sidebar.classList.contains("sheet-half")) setMobileSheetState('half');
+      else setMobileSheetState('collapsed');
+    }
+  });
+
+  // 단순 탭 클릭 시에도 순차적으로 전환 작동 바인딩
+  handle.addEventListener("click", () => {
+    if (sidebar.classList.contains("sheet-collapsed")) setMobileSheetState('half');
+    else if (sidebar.classList.contains("sheet-half")) setMobileSheetState('expanded');
+    else setMobileSheetState('collapsed');
+  });
+}
+
 async function startApp() {
   const ok = await loadAllLibraries();
   if (!ok) {
@@ -962,7 +1051,9 @@ async function startApp() {
     return;
   }
 
-  map = L.map("map").setView([51.2277, 6.7735], 12);
+  map = L.map("map", { zoomControl: false }).setView([51.2277, 6.7735], 12);
+  L.control.zoom({ position: 'topleft' }).addTo(map);
+  
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors",
   }).addTo(map);
@@ -1029,15 +1120,6 @@ async function startApp() {
   document.getElementById("course-clear-btn").addEventListener("click", clearCourse);
   document.getElementById("course-recommend-btn").addEventListener("click", generateRecommendedCourse);
 
-  const sidebarHandle = document.getElementById("sidebar-handle");
-  const appContainer = document.getElementById("app-container");
-  sidebarHandle.addEventListener("click", () => {
-    const collapsed = appContainer.classList.toggle("sidebar-collapsed");
-    sidebarHandle.setAttribute("aria-expanded", String(!collapsed));
-    setTimeout(() => map.invalidateSize(), 50);
-    setTimeout(() => map.invalidateSize(), 350);
-  });
-
   const filterToggleBtn = document.getElementById("filter-toggle-btn");
   const filterMore = document.getElementById("filter-more");
   filterToggleBtn.addEventListener("click", () => {
@@ -1049,13 +1131,18 @@ async function startApp() {
   if (!useRouting) {
     const clearBtn = document.getElementById("clear-route-btn");
     clearBtn.disabled = true;
-    clearBtn.title = "경로 안내 라이브러리를 불러오지 못해 이 기능은 비활성화됐어요.";
     clearBtn.style.opacity = "0.5";
   }
 
   updateLevelBadge();
   renderCoursePanel();
   applyFilters();
+
+  // 모바일 제스처 기동
+  if (window.innerWidth <= 768) {
+    initMobileSwipeEngine();
+    setMobileSheetState('collapsed'); // 기본 진입 시 하단 압축 고정
+  }
 
   const loadingEl = document.getElementById("map-loading");
   if (loadingEl) loadingEl.remove(); 
