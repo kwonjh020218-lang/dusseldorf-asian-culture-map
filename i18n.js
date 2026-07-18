@@ -26,17 +26,17 @@ const UI_TRANSLATIONS = {
     "spicyLabel": "🌶️ 매운 음식 있음",
     "photospotLabel": "📸 인생샷 스팟만 보기",
     "favonlyLabel": "⭐ 즐겨찾기 해둔 곳만 보기",
-    "locateDefault": "📍 내 위치",
-    "locateSearching": "위치 찾는 중...",
-    "locateActiveReal": "📍 내 위치 기준으로 거리 표시 중 (다시 찾기)",
-    "locateActiveFallback": "📍 중앙역 기준으로 거리 표시 중 (다시 찾기)",
+    "locateDefault": "🎯 내 위치",
+    "locateSearching": "🎯 위치 찾는 중...",
+    "locateActiveReal": "🎯 내 위치 기준으로 거리 표시 중 (다시 찾기)",
+    "locateActiveFallback": "🎯 중앙역 기준으로 거리 표시 중 (다시 찾기)",
     "locateUnsupported": "브라우저가 위치 기능을 지원하지 않아요",
     "clearRouteBtn": "🚗 경로 지우기",
     "courseEmpty": "아직 담은 곳이 없어요. 장소를 담거나 추천 코스를 받아보세요.",
     "courseClearBtn": "🗑 비우기",
     "courseRecommendBtn": "🎲 추천 코스 짜줘",
-    "courseStartReal": "📍 출발점: 내 위치",
-    "courseStartFallback": "📍 출발점: 뒤셀도르프 중앙역",
+    "courseStartReal": "🎯 출발점: 내 위치",
+    "courseStartFallback": "🎯 출발점: 뒤셀도르프 중앙역",
     "rouletteBtn": "🎲 오늘 뭐 하지?",
     "rouletteModalSubtitle": "오늘의 추천",
     "modalConfirm": "확인",
@@ -51,7 +51,7 @@ const UI_TRANSLATIONS = {
     "reasonPrefix": "평소 {reasons}을(를) 좋아하시길래",
     "reasonDefault": "취향을 분석해보니",
     "alertRoutingLibFailed": "경로 안내 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인해주세요.",
-    "alertNeedLocation": "먼저 '📍 내 위치' 버튼을 눌러주세요!",
+    "alertNeedLocation": "먼저 '🎯 내 위치' 버튼을 눌러주세요!",
     "alertNoRestaurantForCourse": "지금 필터 조건에 맞는 식당이 없어서 추천 코스를 못 만들었어요. 필터를 좀 풀어보시겠어요?",
     "alertTasteNotEnough": "아직 취향을 분석하기엔 데이터가 부족해요 ({count}/3곳).\n마음에 드는 곳을 즐겨찾기하거나 가본 곳으로 체크해보세요!",
     "alertTasteNoMatch": "취향에 맞는 새로운 곳을 아직 못 찾았어요. 조금 더 다양한 곳을 둘러봐 주세요!",
@@ -71,17 +71,17 @@ const UI_TRANSLATIONS = {
     "spicyLabel": "🌶️ Spicy available",
     "photospotLabel": "📸 Photo spots only",
     "favonlyLabel": "⭐ Favorites only",
-    "locateDefault": "📍 My location",
-    "locateSearching": "Finding location...",
-    "locateActiveReal": "📍 Showing distances from my location (tap to refresh)",
-    "locateActiveFallback": "📍 Showing distances from Hbf (tap to retry)",
+    "locateDefault": "🎯 My location",
+    "locateSearching": "🎯 Finding location...",
+    "locateActiveReal": "🎯 Showing distances from my location (tap to refresh)",
+    "locateActiveFallback": "🎯 Showing distances from Hbf (tap to retry)",
     "locateUnsupported": "This browser doesn't support location",
     "clearRouteBtn": "🚗 Clear route",
     "courseEmpty": "You haven't added any places yet. Add one, or get a recommended course.",
     "courseClearBtn": "🗑 Clear",
     "courseRecommendBtn": "🎲 Get a recommended course",
-    "courseStartReal": "📍 Start: my location",
-    "courseStartFallback": "📍 Start: Düsseldorf Hbf",
+    "courseStartReal": "🎯 Start: my location",
+    "courseStartFallback": "🎯 Start: Düsseldorf Hbf",
     "rouletteBtn": "🎲 What now?",
     "rouletteModalSubtitle": "Today's pick",
     "modalConfirm": "OK",
@@ -96,7 +96,7 @@ const UI_TRANSLATIONS = {
     "reasonPrefix": "Since you usually like {reasons}",
     "reasonDefault": "Based on your taste",
     "alertRoutingLibFailed": "Couldn't load the routing library. Please check your internet connection.",
-    "alertNeedLocation": "Please tap the '📍 My location' button first!",
+    "alertNeedLocation": "Please tap the '🎯 My location' button first!",
     "alertNoRestaurantForCourse": "No restaurants match your current filters, so a course couldn't be created. Try loosening the filters?",
     "alertTasteNotEnough": "Not enough data to analyze your taste yet ({count}/3 places).\nTry favoriting or marking some places as visited!",
     "alertTasteNoMatch": "Couldn't find a new place matching your taste. Try exploring a bit more variety!",
@@ -116,17 +116,17 @@ const UI_TRANSLATIONS = {
     "spicyLabel": "🌶️ Scharf verfügbar",
     "photospotLabel": "📸 Nur Fotospots",
     "favonlyLabel": "⭐ Nur Favoriten",
-    "locateDefault": "📍 Mein Standort",
-    "locateSearching": "Standort wird gesucht...",
-    "locateActiveReal": "📍 Entfernungen von meinem Standort (erneut suchen)",
-    "locateActiveFallback": "📍 Entfernungen vom Hbf (erneut versuchen)",
+    "locateDefault": "🎯 Mein Standort",
+    "locateSearching": "🎯 Standort wird gesucht...",
+    "locateActiveReal": "🎯 Entfernungen von meinem Standort (erneut suchen)",
+    "locateActiveFallback": "🎯 Entfernungen vom Hbf (erneut versuchen)",
     "locateUnsupported": "Dieser Browser unterstützt keine Standortfunktion",
     "clearRouteBtn": "🚗 Route löschen",
     "courseEmpty": "Noch keine Orte hinzugefügt. Füge einen hinzu oder lass dir eine Route vorschlagen.",
     "courseClearBtn": "🗑 Leeren",
     "courseRecommendBtn": "🎲 Route vorschlagen lassen",
-    "courseStartReal": "📍 Start: mein Standort",
-    "courseStartFallback": "📍 Start: Düsseldorf Hbf",
+    "courseStartReal": "🎯 Start: mein Standort",
+    "courseStartFallback": "🎯 Start: Düsseldorf Hbf",
     "rouletteBtn": "🎲 Was jetzt?",
     "rouletteModalSubtitle": "Heutiger Tipp",
     "modalConfirm": "OK",
@@ -141,10 +141,10 @@ const UI_TRANSLATIONS = {
     "reasonPrefix": "Da du meist {reasons} magst",
     "reasonDefault": "Basierend auf deinem Geschmack",
     "alertRoutingLibFailed": "Die Routing-Bibliothek konnte nicht geladen werden. Bitte Internetverbindung prüfen.",
-    "alertNeedLocation": "Bitte zuerst auf '📍 Mein Standort' tippen!",
+    "alertNeedLocation": "Bitte zuerst auf '🎯 Mein Standort' tippen!",
     "alertNoRestaurantForCourse": "Keine Restaurants entsprechen den aktuellen Filtern, daher konnte keine Route erstellt werden. Filter lockern?",
     "alertTasteNotEnough": "Noch nicht genug Daten für eine Geschmacksanalyse ({count}/3 Orte).\nFüge Favoriten hinzu oder markiere besuchte Orte!",
-    "alertTasteNoMatch": "Kein neuer Ort passend zu deinem Geschmack gefunden. Erkunde etwas mehr Vielfalt!",
+    "alertTasteNoMatch": "Ke인 neuer Ort passend zu deinem Geschmack gefunden. Erkunde etwas mehr Vielfalt!",
     "noResults": "Keine Orte gefunden.<br>Passe deine Suche oder Filter an.",
     "mapLoading": "Karte wird geladen...",
     "mapLoadFailed": "Karte konnte nicht geladen werden.<br>Bitte Internetverbindung prüfen oder ein anderes Netzwerk (z. B. Mobilfunk-Hotspot) versuchen.",
@@ -190,9 +190,7 @@ function applyUIText() {
 
   const filterMore = document.getElementById("filter-more");
   const filterToggleBtn = document.getElementById("filter-toggle-btn");
-  filterToggleBtn.textContent = filterMore.classList.contains("expanded")
-    ? t("filterMoreExpanded")
-    : t("filterMoreCollapsed");
+  filterToggleBtn.textContent = filterMore.classList.contains("expanded") ? t("filterMoreExpanded") : t("filterMoreCollapsed");
 
   const veganLabel = document.getElementById("vegan-checkbox")?.closest("label");
   if (veganLabel) veganLabel.lastChild.textContent = " " + t("veganLabel");
@@ -203,10 +201,7 @@ function applyUIText() {
   const favonlyLabel = document.getElementById("fav-only-checkbox")?.closest("label");
   if (favonlyLabel) favonlyLabel.lastChild.textContent = " " + t("favonlyLabel");
 
-  if (!document.getElementById("locate-btn").classList.contains("active")) {
-    // 💡 초기화 로직에서도 내 위치 아이콘을 🎯로 안전하게 교체 처리합니다.
-    document.getElementById("locate-btn").textContent = t("locateDefault").replace("📍", "🎯");
-  }
+  document.getElementById("locate-btn").textContent = isRealGpsLocation ? t("locateActiveReal") : (userLocation ? t("locateActiveFallback") : t("locateDefault"));
   document.getElementById("clear-route-btn").textContent = t("clearRouteBtn");
   document.getElementById("course-empty").textContent = t("courseEmpty");
   document.getElementById("course-clear-btn").textContent = t("courseClearBtn");
