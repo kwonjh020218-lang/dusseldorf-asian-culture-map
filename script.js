@@ -113,7 +113,7 @@ let basePlaces = []; // 한국어 원본 데이터 (언어 전환 시 이걸 기
 function normalizePlace(row) {
   const translations = {};
   (row.place_translations || []).forEach((tr) => {
-    // translations 객체에 데이터베이스에서 가져온 번역된 name도 함께 저장합니다.
+    // ⚠️ 여기서 tr.name 은 반드시 모두 '소문자'여야 합니다! (데이터베이스의 컬럼명과 일치)
     translations[tr.lang] = { name: tr.name, note: tr.note, menu: tr.menu || [] };
   });
 
@@ -133,7 +133,6 @@ function normalizePlace(row) {
     _translations: translations,
   };
 }
-
 async function fetchPlaces() {
   // 💡 괄호 안에 'name'을 추가하여 데이터베이스에서 번역된 이름 데이터도 함께 긁어오도록 주소를 수정합니다.
   const response = await fetch(
