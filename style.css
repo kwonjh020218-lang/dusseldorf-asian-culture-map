@@ -449,3 +449,7 @@ body {
   #locate-btn, #location-row #clear-route-btn { min-width: 120px; }
   .leaflet-popup-content-wrapper { max-width: 78vw; }
 }
+/* style.css 맨 아래에 그대로 추가 */
+.leaflet-zoom-animated {
+  will-change: transform;
+}
