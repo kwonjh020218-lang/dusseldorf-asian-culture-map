@@ -29,7 +29,7 @@ body {
   margin-top: 0.2rem;
 }
 
-/* 국기 스위처 고도화 스타일 */
+/* 국기 스위처 패널 윈도우 호환 튜닝 스타일 */
 #lang-switcher {
   display: flex;
   gap: 0.5rem;
@@ -39,17 +39,23 @@ body {
 .lang-btn {
   border: 1px solid #3a4a6b;
   background: transparent;
-  font-size: 0.85rem; 
+  font-size: 0.85rem;
   font-weight: 600;
   color: #cfd6e4;
-  padding: 0.4rem 0.8rem; 
+  padding: 0.4rem 0.8rem;
   border-radius: 8px;
   cursor: pointer;
   font-family: inherit;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.4rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* Twemoji 국기 이미지 크기 고정 */
+.lang-btn img.emoji {
+  width: 1.2rem;
+  height: auto;
+  vertical-align: middle;
 }
 .lang-btn:hover {
   border-color: #c65a3c;
@@ -58,7 +64,8 @@ body {
 .lang-btn.active {
   background: #c65a3c;
   border-color: #c65a3c;
-  transform: scale(1.05);
+  color: #fff;
+  transform: scale(1.03);
   box-shadow: 0 0 8px rgba(198, 90, 60, 0.6);
 }
 
