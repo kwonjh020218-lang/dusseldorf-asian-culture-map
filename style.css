@@ -29,7 +29,7 @@ body {
   margin-top: 0.2rem;
 }
 
-/* 국기 스위처 패널 윈도우 호환 튜닝 스타일 */
+/* 국기 이미지 전용 스위처 레이아웃 */
 #lang-switcher {
   display: flex;
   gap: 0.5rem;
@@ -48,14 +48,16 @@ body {
   font-family: inherit;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-/* Twemoji 국기 이미지 크기 고정 */
-.lang-btn img.emoji {
-  width: 1.2rem;
-  height: auto;
-  vertical-align: middle;
+/* 국기 이미지 강제 크기 규격 지정 */
+.lang-btn .flag-img {
+  width: 20px;
+  height: 14px;
+  object-fit: cover;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 .lang-btn:hover {
   border-color: #c65a3c;
