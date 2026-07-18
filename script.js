@@ -836,7 +836,7 @@ function applyFilters() {
 
 function drawUserMarker(loc, popupText) {
   const btn = document.getElementById("locate-btn");
-  btn.textContent = isRealGpsLocation ? t("locateActiveReal") : t("locateActiveFallback");
+  btn.textContent = isRealGpsLocation ? t("locateActiveReal").replace("📍", "🎯") : t("locateActiveFallback").replace("📍", "🎯");
   btn.classList.add("active");
 
   if (userMarker) map.removeLayer(userMarker);
@@ -863,7 +863,7 @@ function requestUserLocation() {
     btn.textContent = t("locateUnsupported");
     return;
   }
-  btn.textContent = t("locateSearching");
+  btn.textContent = t("locateSearching").replace("위치", "🎯 위치");
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
