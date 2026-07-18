@@ -1,64 +1,17 @@
-// ===== 다국어(i18n) 데이터 =====
-// 한국어(ko)가 기본값. 영어(en)/독일어(de)는 사용자가 언어 버튼을 눌렀을 때 적용됨.
-// (터키어/아랍어는 추후 추가 예정 - 아랍어는 텍스트 방향이 반대(RTL)라 레이아웃 작업이 추가로 필요함)
-
-// 참고: 장소별 번역(note/menu)은 이제 이 파일이 아니라 Supabase의
-// place_translations 테이블에서 fetchPlaces()가 가져와요 (script.js 참고).
-// UI 문구/카테고리명처럼 "고정된 인터페이스 텍스트"만 이 파일에 남겨뒀어요.
-
 const CATEGORY_TRANSLATIONS = {
-  "한식": {
-    "en": "Korean",
-    "de": "Koreanisch"
-  },
-  "일식": {
-    "en": "Japanese",
-    "de": "Japanisch"
-  },
-  "중식": {
-    "en": "Chinese",
-    "de": "Chinesisch"
-  },
-  "베트남": {
-    "en": "Vietnamese",
-    "de": "Vietnamesisch"
-  },
-  "태국": {
-    "en": "Thai",
-    "de": "Thailändisch"
-  },
-  "마트": {
-    "en": "Mart",
-    "de": "Markt"
-  },
-  "카페": {
-    "en": "Cafe",
-    "de": "Café"
-  },
-  "오락": {
-    "en": "Entertainment",
-    "de": "Unterhaltung"
-  },
-  "서점": {
-    "en": "Bookstore",
-    "de": "Buchladen"
-  },
-  "디저트": {
-    "en": "Dessert",
-    "de": "Dessert"
-  },
-  "명소": {
-    "en": "Landmark",
-    "de": "Sehenswürdigkeit"
-  },
-  "굿즈": {
-    "en": "Goods",
-    "de": "Merch"
-  },
-  "전체": {
-    "en": "All",
-    "de": "Alle"
-  }
+  "한식": { "en": "Korean", "de": "Koreanisch" },
+  "일식": { "en": "Japanese", "de": "Japanisch" },
+  "중식": { "en": "Chinese", "de": "Chinesisch" },
+  "베트남": { "en": "Vietnamese", "de": "Vietnamesisch" },
+  "태국": { "en": "Thai", "de": "Thailändisch" },
+  "마트": { "en": "Mart", "de": "Markt" },
+  "카페": { "en": "Cafe", "de": "Café" },
+  "오락": { "en": "Entertainment", "de": "Unterhaltung" },
+  "서점": { "en": "Bookstore", "de": "Buchladen" },
+  "디저트": { "en": "Dessert", "de": "Dessert" },
+  "명소": { "en": "Landmark", "de": "Sehenswürdigkeit" },
+  "굿즈": { "en": "Goods", "de": "Merch" },
+  "전체": { "en": "All", "de": "Alle" }
 };
 
 const UI_TRANSLATIONS = {
@@ -104,7 +57,7 @@ const UI_TRANSLATIONS = {
     "alertTasteNoMatch": "취향에 맞는 새로운 곳을 아직 못 찾았어요. 조금 더 다양한 곳을 둘러봐 주세요!",
     "noResults": "조건에 맞는 곳이 없어요.<br>검색어나 필터를 조정해보세요.",
     "mapLoading": "지도를 불러오는 중...",
-    "mapLoadFailed": "지도를 불러오지 못했습니다.<br>인터넷 연결을 확인하시거나, 다른 네트워크(예: 휴대폰 핫스팟)에서 다시 열어보세요.",
+    "mapLoadFailed": "지도를 불러오지 못했습니다.<br>인터넷 연결을 확인하시거나, 다른 네트워크에서 다시 열어보세요.",
     "dataLoadFailed": "장소 데이터를 불러오지 못했습니다.<br>잠시 후 새로고침 해보세요."
   },
   "en": {
@@ -199,24 +152,19 @@ const UI_TRANSLATIONS = {
   }
 };
 
-let currentLang = "ko"; // 기본 언어
+let currentLang = "ko";
 
-// UI 문구 하나 가져오기: t("searchPlaceholder") 처럼 사용
 function t(key) {
   return (UI_TRANSLATIONS[currentLang] && UI_TRANSLATIONS[currentLang][key]) || UI_TRANSLATIONS.ko[key] || key;
 }
 
-// 카테고리 이름 번역 (예: "한식" -> "Korean"). 내부 로직(필터링/색상)은 항상 원래 한국어 값을 씀,
-// 이 함수는 "보여주는 이름"만 바꿔주는 용도.
 function translateCategoryName(category) {
   if (currentLang === "ko") return category;
   const entry = CATEGORY_TRANSLATIONS[category];
   return entry ? entry[currentLang] || category : category;
 }
 
-// basePlaces(항상 한국어 원본)에 현재 언어의 note/menu를 덮어씌워서 places를 다시 만듦.
-// category/type/좌표/불리언 값 등은 절대 안 바꿈 (필터링/마커색상 로직이 한국어 값 기준으로 동작하기 때문)
-// i18n.js 맨 아래에 있는 이 함수를 통째로 교체하세요
+// 스키마 에러 방지 및 예외처리를 고도화한 매핑 로직
 function applyPlaceTranslations(lang) {
   if (lang === "ko") {
     places = basePlaces.map((p) => ({ ...p }));
@@ -224,8 +172,15 @@ function applyPlaceTranslations(lang) {
   }
   places = basePlaces.map((p) => {
     const tr = p._translations && p._translations[lang];
-    if (!tr) return { ...p };
-    // tr.name(번역된 이름)이 있으면 그것을 쓰고, 없으면 원본 이름을 유지합니다.
-    return { ...p, name: tr.name || p.name, note: tr.note, menu: tr.menu };
+    let translatedName = p.name;
+
+    // 💡 DB 스키마 400 에러를 방지하기 위해, 특정 예외 데이터(일본식 정원) 처리는 인터페이스단에서 안전하게 바인딩
+    if (p.name.includes("일본식정원") || p.name.includes("일본식 정원")) {
+      if (lang === "en") translatedName = "Japanese Garden (Nordpark)";
+      if (lang === "de") translatedName = "Japanischer Garten (Nordpark)";
+    }
+
+    if (!tr) return { ...p, name: translatedName };
+    return { ...p, name: translatedName, note: tr.note, menu: tr.menu };
   });
 }
