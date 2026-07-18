@@ -49,7 +49,7 @@ const ROUTING_JS_URLS = [
 ];
 const ROUTING_CSS_URLS = [
   "https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css",
-  "https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
+  "https://cdn.jsdelivr.net/npm/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
 ];
 
 async function loadFromCdns(urls, checkFn) {
@@ -810,9 +810,9 @@ function applyFilters() {
         li.classList.add("highlight-flash");
         li.onanimationend = () => li.classList.remove("highlight-flash");
       }
-      // 💡 모바일에서 마커 클릭 시 정보 식별을 돕기 위해 하단 시트를 중간(Half) 높이로 자동 전환
+      // 💡 [2안 최적화] 모바일에서 지도의 핀(마커)을 탭하면 바닥 시트가 아래로 쏙 내려가며 지도를 넓게 비춤
       if (window.innerWidth <= 768) {
-        setMobileSheetState('half');
+        setMobileSheetState('collapsed');
       }
     });
 
@@ -826,7 +826,7 @@ function applyFilters() {
 
     li.addEventListener("click", () => {
       focusOnMarker(place, marker, 15);
-      // 💡 리스트 아이템 클릭 후 지도 포커싱 시 모바일에서는 시트를 최하단으로 숨김 처리
+      // 💡 [2안 최적화] 모바일 리스트에서 가게를 터치하면 시트가 자동으로 쏙 내려가면서 지도를 넓게 강조
       if (window.innerWidth <= 768) {
         setMobileSheetState('collapsed');
       }
@@ -954,7 +954,7 @@ function setLanguage(lang) {
 }
 
 // ==========================================================================
-// 💡 [구글맵 제스처 모듈] 모바일 스와이프 인터랙션 코어 엔진
+// 💡 모바일 제스처 스냅 엔진 (2안 대응 안정화 튜닝 버전)
 // ==========================================================================
 let tsY = 0;
 let tmY = 0;
@@ -979,7 +979,7 @@ function initMobileSwipeEngine() {
   handle.addEventListener("touchstart", (e) => {
     tsY = e.touches[0].clientY;
     isDraggingSheet = true;
-    sidebar.style.transition = "none"; // 드래그 중에는 애니메이션 해제
+    sidebar.style.transition = "none";
   }, { passive: true });
 
   handle.addEventListener("touchmove", (e) => {
@@ -987,7 +987,6 @@ function initMobileSwipeEngine() {
     tmY = e.touches[0].clientY;
     let deltaY = tmY - tsY;
     
-    // 실시간 드래그 변위 좌표 계산 (바닥 이탈 방지)
     let fullH = window.innerHeight * 0.8;
     let baseTranslate = fullH - 44;
     let currentTranslate = baseTranslate + deltaY;
@@ -1005,30 +1004,24 @@ function initMobileSwipeEngine() {
     isDraggingSheet = false;
     sidebar.style.transition = "transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)";
 
-    let fullH = window.innerHeight * 0.8;
     let currentY = e.changedTouches[0].clientY;
     let deltaY = currentY - tsY;
 
-    // 임계값(Threshold) 연산을 통한 구글맵 스냅 스위칭
     if (Math.abs(deltaY) > 40) {
       if (deltaY < 0) {
-        // 위로 밀었을 때
         if (sidebar.classList.contains("sheet-collapsed")) setMobileSheetState('half');
         else setMobileSheetState('expanded');
       } else {
-        // 아래로 밀었을 때
         if (sidebar.classList.contains("sheet-expanded")) setMobileSheetState('half');
         else setMobileSheetState('collapsed');
       }
     } else {
-      // 복원 복구
       if (sidebar.classList.contains("sheet-expanded")) setMobileSheetState('expanded');
       else if (sidebar.classList.contains("sheet-half")) setMobileSheetState('half');
       else setMobileSheetState('collapsed');
     }
   });
 
-  // 단순 탭 클릭 시에도 순차적으로 전환 작동 바인딩
   handle.addEventListener("click", () => {
     if (sidebar.classList.contains("sheet-collapsed")) setMobileSheetState('half');
     else if (sidebar.classList.contains("sheet-half")) setMobileSheetState('expanded');
@@ -1138,10 +1131,9 @@ async function startApp() {
   renderCoursePanel();
   applyFilters();
 
-  // 모바일 제스처 기동
   if (window.innerWidth <= 768) {
     initMobileSwipeEngine();
-    setMobileSheetState('collapsed'); // 기본 진입 시 하단 압축 고정
+    setMobileSheetState('collapsed');
   }
 
   const loadingEl = document.getElementById("map-loading");
