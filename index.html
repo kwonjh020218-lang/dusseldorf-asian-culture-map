@@ -6,8 +6,6 @@
   <title>뒤셀도르프 아시안 컬처 맵</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗺️</text></svg>" />
   <link rel="stylesheet" href="style.css" />
-  <!-- 💡 윈도우 국기 미지원 이슈를 해결하기 위한 Twemoji 폴백 스크립트 라이브러리 추가 -->
-  <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@14.1.0/dist/twemoji.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -16,11 +14,17 @@
     <p class="subtitle">맛집·마트부터 만화카페·서점·명소까지</p>
   </header>
 
-  <!-- 💡 윈도우에서도 글자가 깨지지 않도록 완전 가공 처리한 랭킹 스위처 -->
+  <!-- 💡 윈도우 폰트 버그를 우회하기 위해 고화질 SVG 국기 이미지를 직접 마크업 -->
   <div id="lang-switcher">
-    <button class="lang-btn active" data-lang="ko" type="button" aria-label="한국어">대한민국 🇰🇷</button>
-    <button class="lang-btn" data-lang="en" type="button" aria-label="English">영국 🇬🇧</button>
-    <button class="lang-btn" data-lang="de" type="button" aria-label="Deutsch">독일 🇩🇪</button>
+    <button class="lang-btn active" data-lang="ko" type="button" aria-label="한국어">
+      <img src="https://twemoji.maxcdn.com/v/14.0.2/svg/1f1f0-1f1f7.svg" alt="ko" class="flag-img" /> 대한민국
+    </button>
+    <button class="lang-btn" data-lang="en" type="button" aria-label="English">
+      <img src="https://twemoji.maxcdn.com/v/14.0.2/svg/1f1ec-1f1e7.svg" alt="en" class="flag-img" /> 영국
+    </button>
+    <button class="lang-btn" data-lang="de" type="button" aria-label="Deutsch">
+      <img src="https://twemoji.maxcdn.com/v/14.0.2/svg/1f1e9-1f1ea.svg" alt="de" class="flag-img" /> 독일
+    </button>
   </div>
 
   <div id="top-strip">
@@ -107,11 +111,5 @@
 
   <script src="i18n.js"></script>
   <script src="script.js"></script>
-  <script>
-    // 💡 HTML 로드 즉시 국기 이모지를 그래픽 이미지로 변환 실행
-    window.addEventListener('DOMContentLoaded', () => {
-      if(window.twemoji) twemoji.parse(document.getElementById('lang-switcher'));
-    });
-  </script>
 </body>
 </html>
