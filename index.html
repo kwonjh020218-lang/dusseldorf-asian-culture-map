@@ -10,23 +10,25 @@
 <body>
 
   <header id="app-header">
-    <h1>뒤셀도르프 아시안 컬처 맵</h1>
-    <p class="subtitle">맛집·마트부터 만화카페·서점·명소까지</p>
-  </header>
+    <div id="header-text">
+      <h1>뒤셀도르프 아시안 컬처 맵</h1>
+      <p class="subtitle">맛집·마트부터 만화카페·서점·명소까지</p>
+    </div>
 
-  <!-- 💡 국기만 노출하되, 외부 이미지(twemoji CDN) 대신 인라인 SVG 사용 -
-       네트워크 요청이 필요 없어서 CDN이 느리거나 막혀도 항상 보임 -->
-  <div id="lang-switcher">
-    <button class="lang-btn active" data-lang="ko" type="button" aria-label="한국어">
-      <svg class="flag-img" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg"><rect width="30" height="20" fill="#fff"/><path d="M15 4 A6 6 0 0 1 15 16 A3 3 0 0 1 15 10 A3 3 0 0 0 15 4 Z" fill="#c60c30"/><path d="M15 16 A6 6 0 0 1 15 4 A3 3 0 0 1 15 10 A3 3 0 0 0 15 16 Z" fill="#003478"/></svg>
-    </button>
-    <button class="lang-btn" data-lang="en" type="button" aria-label="English">
-      <svg class="flag-img" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="30" fill="#00247d"/><path d="M0 0 L60 30 M60 0 L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0 L60 30 M60 0 L0 30" stroke="#cf142b" stroke-width="2"/><path d="M30 0 V30 M0 15 H60" stroke="#fff" stroke-width="10"/><path d="M30 0 V30 M0 15 H60" stroke="#cf142b" stroke-width="6"/></svg>
-    </button>
-    <button class="lang-btn" data-lang="de" type="button" aria-label="Deutsch">
-      <svg class="flag-img" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg"><rect width="30" height="20" fill="#ffce00"/><rect width="30" height="13.3" fill="#000"/><rect width="30" height="6.7" fill="#dd0000"/></svg>
-    </button>
-  </div>
+    <!-- 💡 국기만 노출하되, 외부 이미지(twemoji CDN) 대신 인라인 SVG 사용 -
+         네트워크 요청이 필요 없어서 CDN이 느리거나 막혀도 항상 보임 -->
+    <div id="lang-switcher">
+      <button class="lang-btn active" data-lang="ko" type="button" aria-label="한국어">
+        <svg class="flag-img" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg"><rect width="30" height="20" fill="#fff"/><path d="M15 4 A6 6 0 0 1 15 16 A3 3 0 0 1 15 10 A3 3 0 0 0 15 4 Z" fill="#c60c30"/><path d="M15 16 A6 6 0 0 1 15 4 A3 3 0 0 1 15 10 A3 3 0 0 0 15 16 Z" fill="#003478"/></svg>
+      </button>
+      <button class="lang-btn" data-lang="en" type="button" aria-label="English">
+        <svg class="flag-img" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="30" fill="#00247d"/><path d="M0 0 L60 30 M60 0 L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0 L60 30 M60 0 L0 30" stroke="#cf142b" stroke-width="2"/><path d="M30 0 V30 M0 15 H60" stroke="#fff" stroke-width="10"/><path d="M30 0 V30 M0 15 H60" stroke="#cf142b" stroke-width="6"/></svg>
+      </button>
+      <button class="lang-btn" data-lang="de" type="button" aria-label="Deutsch">
+        <svg class="flag-img" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg"><rect width="30" height="20" fill="#ffce00"/><rect width="30" height="13.3" fill="#000"/><rect width="30" height="6.7" fill="#dd0000"/></svg>
+      </button>
+    </div>
+  </header>
 
   <div id="top-strip">
     <div id="level-badge">Lv.0 · 시작 전</div>

@@ -795,7 +795,7 @@ function applyFilters() {
     });
     const marker = L.marker([place.lat, place.lng], { icon: markerIcon });
 
-    marker.bindPopup(() => buildPopupContent(place), { maxWidth: 260, minWidth: 200, maxHeight: 280 });
+    marker.bindPopup(() => buildPopupContent(place), { maxWidth: 190, minWidth: 160, maxHeight: 180 });
 
     const priceForTooltip = place.priceLevel ? PRICE_RANGES[place.priceLevel] : "";
     marker.bindTooltip(
