@@ -810,9 +810,6 @@ function applyFilters() {
         li.classList.add("highlight-flash");
         li.onanimationend = () => li.classList.remove("highlight-flash");
       }
-      if (window.innerWidth <= 768) {
-        setMobileSheetState('collapsed');
-      }
     });
 
     markerLayer.addLayer(marker);
@@ -825,9 +822,6 @@ function applyFilters() {
 
     li.addEventListener("click", () => {
       focusOnMarker(place, marker, 15);
-      if (window.innerWidth <= 768) {
-        setMobileSheetState('collapsed');
-      }
     });
 
     listEl.appendChild(li);
@@ -908,105 +902,28 @@ function setLanguage(lang) {
 }
 
 // ==========================================================================
-// 💡 모바일 바텀시트 엔진 (재작성 - 실제 지도 공간 기준으로 정확하게 계산)
-// ==========================================================================
-let tsY = 0;
-let isDraggingSheet = false;
-let currentSheetState = "collapsed"; // 'collapsed' | 'half' | 'expanded' - 항상 이 값이 기준(source of truth)
+// 💡 모바일 리스트 토글 (단순화 버전)
+// 드래그로 3단계 조절하던 방식이 화면 크기 계산 오차로 계속 문제가 생겨서,
+// "손잡이 탭 한 번 = 리스트 보이기/숨기기" 만 하는 훨씬 단순하고 안정적인
+// 방식으로 바꿈. flexbox 비율(flex-basis)을 쓰기 때문에 헤더 높이가 얼마든
+// 항상 정확하게 맞음 (vh 계산 오차 문제 자체가 없음).
+let mobileListHidden = false;
 
-// 지도가 실제로 차지하는 공간(#app-container의 진짜 높이) 기준으로 각 상태의
-// translateY 픽셀값을 계산. 화면 전체(vh) 기준으로 계산하면 위에 있는
-// 헤더/언어버튼/상단바 높이만큼 오차가 생겨서 지도가 안 보이거나 시트가
-// 화면 밖으로 넘치는 문제가 있었음 - 그래서 항상 이 함수로만 계산함.
-function getSheetMetrics() {
-  const containerH = document.getElementById("app-container").clientHeight;
-  return {
-    containerH,
-    expandedY: 0,
-    halfY: containerH * 0.45,
-    collapsedY: containerH - 56, // 손잡이만 보이는 높이
-  };
-}
-
-function setMobileSheetState(state) {
-  const sidebar = document.getElementById("sidebar");
-  const metrics = getSheetMetrics();
-  currentSheetState = state;
-
-  const targetY =
-    state === "expanded" ? metrics.expandedY : state === "half" ? metrics.halfY : metrics.collapsedY;
-
-  sidebar.classList.add("sheet-snapping"); // 손 뗀 뒤엔 부드럽게 애니메이션
-  sidebar.style.height = metrics.containerH + "px";
-  sidebar.style.transform = `translateY(${targetY}px)`;
-
+function setMobileListVisible(visible) {
+  const container = document.getElementById("app-container");
+  mobileListHidden = !visible;
+  container.classList.toggle("list-hidden", !visible);
   setTimeout(() => {
     if (map) map.invalidateSize();
-  }, 320);
+  }, 300);
 }
 
-function initMobileSwipeEngine() {
+function initMobileToggle() {
   const handle = document.getElementById("sidebar-handle");
-  const sidebar = document.getElementById("sidebar");
-  if (!handle || !sidebar) return;
-
-  handle.addEventListener(
-    "touchstart",
-    (e) => {
-      tsY = e.touches[0].clientY;
-      isDraggingSheet = true;
-      sidebar.classList.remove("sheet-snapping"); // 드래그 중엔 애니메이션 꺼서 손가락을 그대로 따라오게 함
-    },
-    { passive: true }
-  );
-
-  handle.addEventListener(
-    "touchmove",
-    (e) => {
-      if (!isDraggingSheet) return;
-      const metrics = getSheetMetrics();
-      const deltaY = e.touches[0].clientY - tsY;
-
-      const startY =
-        currentSheetState === "expanded"
-          ? metrics.expandedY
-          : currentSheetState === "half"
-          ? metrics.halfY
-          : metrics.collapsedY;
-
-      let nextY = startY + deltaY;
-      nextY = Math.max(metrics.expandedY, Math.min(metrics.collapsedY, nextY)); // 범위 밖으로 못 나가게 제한
-
-      sidebar.style.transform = `translateY(${nextY}px)`;
-    },
-    { passive: true }
-  );
-
-  handle.addEventListener("touchend", (e) => {
-    if (!isDraggingSheet) return;
-    isDraggingSheet = false;
-
-    const deltaY = e.changedTouches[0].clientY - tsY;
-
-    if (Math.abs(deltaY) > 40) {
-      if (deltaY < 0) {
-        setMobileSheetState(currentSheetState === "collapsed" ? "half" : "expanded");
-      } else {
-        setMobileSheetState(currentSheetState === "expanded" ? "half" : "collapsed");
-      }
-    } else {
-      setMobileSheetState(currentSheetState); // 살짝만 움직였으면 원래 위치로 스냅
-    }
-  });
-
+  if (!handle) return;
   handle.addEventListener("click", () => {
-    if (currentSheetState === "collapsed") setMobileSheetState("half");
-    else if (currentSheetState === "half") setMobileSheetState("expanded");
-    else setMobileSheetState("collapsed");
+    setMobileListVisible(mobileListHidden); // 숨겨져 있으면 보이게, 보이면 숨기게
   });
-
-  // 화면 회전 등으로 크기가 바뀌면 현재 상태 기준으로 다시 계산
-  window.addEventListener("resize", () => setMobileSheetState(currentSheetState));
 }
 
 async function startApp() {
@@ -1112,8 +1029,7 @@ async function startApp() {
   applyFilters();
 
   if (window.innerWidth <= 768) {
-    initMobileSwipeEngine();
-    setMobileSheetState('collapsed');
+    initMobileToggle(); // 기본값은 리스트가 보이는 상태 - 처음 들어왔을 때 리스트가 안 보여서 헷갈리는 문제를 없앰
   }
 
   const loadingEl = document.getElementById("map-loading");
