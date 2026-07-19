@@ -524,4 +524,13 @@ body {
   #location-row { flex-wrap: wrap; }
   #locate-btn, #location-row #clear-route-btn { min-width: 120px; }
   .leaflet-popup-content-wrapper { max-width: 78vw; }
+  .leaflet-popup-content {
+    margin: 8px 10px;
+    font-size: 0.85em; /* 팝업 안 글씨를 전체적으로 살짝 줄여서 세로 길이를 압축 */
+  }
+  .leaflet-popup-content button,
+  .leaflet-popup-content a {
+    padding: 3px !important; /* 버튼들 여백도 줄임 */
+    font-size: 0.7rem !important;
+  }
 }

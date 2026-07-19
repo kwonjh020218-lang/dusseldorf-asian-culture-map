@@ -795,7 +795,7 @@ function applyFilters() {
     });
     const marker = L.marker([place.lat, place.lng], { icon: markerIcon });
 
-    marker.bindPopup(() => buildPopupContent(place), { maxWidth: 260, minWidth: 200 });
+    marker.bindPopup(() => buildPopupContent(place), { maxWidth: 260, minWidth: 200, maxHeight: 280 });
 
     const priceForTooltip = place.priceLevel ? PRICE_RANGES[place.priceLevel] : "";
     marker.bindTooltip(
@@ -920,9 +920,19 @@ function setMobileListVisible(visible) {
 
 function initMobileToggle() {
   const handle = document.getElementById("sidebar-handle");
+  const sidebar = document.getElementById("sidebar");
   if (!handle) return;
+
   handle.addEventListener("click", () => {
     setMobileListVisible(mobileListHidden); // 숨겨져 있으면 보이게, 보이면 숨기게
+  });
+
+  // 리스트가 작게 접혀있을 때는, 손잡이 말고 그 아래 살짝 보이는 리스트 부분을
+  // 눌러도 다시 커지게 함 (손잡이만 눌러야 되는 줄 몰라서 안 커진다고 느끼는 경우 방지)
+  sidebar.addEventListener("click", (e) => {
+    if (mobileListHidden && e.target !== handle && !handle.contains(e.target)) {
+      setMobileListVisible(true);
+    }
   });
 }
 
